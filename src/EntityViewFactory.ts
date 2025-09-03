@@ -1,3 +1,9 @@
+/**
+ * @author fireveined
+ * @contributor Arse09
+ * @license MIT
+ */
+
 import { ComponentConstructor } from "./Component";
 import { Entity } from "./Entity";
 
@@ -32,7 +38,8 @@ export class EntityViewFactory {
 
 type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? never : K }[keyof T];
 type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>;
-type ComponentOf<T extends any> = NonFunctionProperties<T['prototype']>;
+type ComponentOf<T extends new (...args: any) => any> = NonFunctionProperties<InstanceType<T>>;
+
 
 type createEntityViewFunc = <T extends ComponentConstructor,
     T2 extends ComponentConstructor,

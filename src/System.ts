@@ -1,10 +1,16 @@
+/**
+ * @author fireveined
+ * @contributor Arse09
+ * @license MIT
+ */
+
 import { ECS } from "./ECS";
 import { EntityView } from "./EntityViewFactory";
 import { ISystem } from "./ISystem";
 
 export class System implements ISystem {
 
-    public ecs: ECS;
+    public ecs!: ECS;
 
     public update(dt: number): void {
 

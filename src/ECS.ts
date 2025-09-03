@@ -1,3 +1,9 @@
+/**
+ * @author fireveined
+ * @contributor Arse09
+ * @license MIT
+ */
+
 import { Component, ComponentConstructor, ComponentInitializator } from "./Component";
 import { Entity } from "./Entity";
 import { Archetype } from "./Archetype";
@@ -33,7 +39,8 @@ export class ECS {
     public addComponentsToEntity(entity: Entity, components: ComponentInitializator[]): void {
         entity.components.push(...components);
         for (const component of components) {
-            this._getComponentInstance(component.component).reset(entity as any, ...component.args);
+            this._getComponentInstance(component.component).reset(entity as any, ...(component.args ?? []));
+
         }
         this._groupsRegistry.pushEntity(entity, components);
     }
@@ -51,18 +58,19 @@ export class ECS {
         }
     }
 
-    public createEntity: createEntityFunc = ((components: ComponentInitializator[]) => {
+    public createEntity<T extends Component[]>(components: ComponentInitializator<T[number]>[]): Entity {
         const entity = new Entity([]);
         entity.id = this._currentID++;
-        this.addComponentsToEntity(entity, components)
-        return entity as any;
-    }) as any;
+        this.addComponentsToEntity(entity, components);
+        return entity;
+    }
 
-    private _getComponentInstance(component: ComponentConstructor): Component {
+
+    private _getComponentInstance<T extends Component>(component: ComponentConstructor<T>): T {
         if (!this._components[component.id]) {
             this._components[component.id] = new component();
         }
-        return this._components[component.id];
+        return this._components[component.id] as T;
     }
 
     public createArchetype(components: ComponentInitializator[]): Archetype {
@@ -74,7 +82,7 @@ export class ECS {
 
 type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? never : K }[keyof T];
 type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>;
-type ComponentOf<T extends ComponentInitializator> = NonFunctionProperties<T['component']['prototype']>;
+type ComponentOf<T extends ComponentInitializator> = NonFunctionProperties<InstanceType<T['component']>>;
 
 
 type createEntityFunc = <T extends ComponentInitializator,

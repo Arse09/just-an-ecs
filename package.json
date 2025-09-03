@@ -1,15 +1,19 @@
 {
   "name": "perform-ecs",
-  "version": "0.7.6",
+  "version": "1.0.0",
   "description": "Efficient Entity Component System framework",
-  "main": "index.js",
+  "main": "build/index.js",
+  "module": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
-    "test": "node_modules/.bin/mocha --opts ./mocha.opts",
-    "build": "tsc"
+    "build": "tsc",
+    "dev": "tsc -w"
   },
+  "license": "MIT",
   "author": "Fireveined",
-  "license": "ISC",
+  "contributors": [
+    "Arse09"
+  ],
   "dependencies": {},
   "devDependencies": {
     "@types/chai": "^4.1.7",
