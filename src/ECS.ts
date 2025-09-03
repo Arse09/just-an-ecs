@@ -25,7 +25,6 @@ export class ECS {
 
     public removeEntity(entity: Entity): void {
         this._groupsRegistry.removeEntity(entity);
-        ;
     }
 
     public removeComponentsFromEntity(entity: Entity, components: ComponentConstructor[] | ComponentConstructor): void {
@@ -36,13 +35,14 @@ export class ECS {
         }
     }
 
-    public addComponentsToEntity(entity: Entity, components: ComponentInitializator[]): void {
-        entity.components.push(...components);
-        for (const component of components) {
-            this._getComponentInstance(component.component).reset(entity as any, ...(component.args ?? []));
+    public addComponentsToEntity(entity: Entity, componentInits: ComponentInitializator[]): void {
+        entity.components.push(...componentInits);
+        for (const componentInit of componentInits) {
+            const compInstance = this._getComponentInstance(componentInit.component);
+            compInstance.reset(compInstance, ...(componentInit.args ?? []));
 
         }
-        this._groupsRegistry.pushEntity(entity, components);
+        this._groupsRegistry.pushEntity(entity, componentInits);
     }
 
 

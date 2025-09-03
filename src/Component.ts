@@ -31,7 +31,7 @@ export type ComponentConstructor<T extends Component = Component> = {
 };
 
 export interface ComponentInitializator<T extends Component = Component> {
-    component: ComponentConstructor<T>;   // constructor, not instance
+    component: ComponentConstructor<T>;
     args?: Tail<Parameters<T['reset']>>;
 }
 
