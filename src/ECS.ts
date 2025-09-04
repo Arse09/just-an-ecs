@@ -39,7 +39,7 @@ export class ECS {
         entity.components.push(...componentInits);
         for (const componentInit of componentInits) {
             const compInstance = this._getComponentInstance(componentInit.component);
-            compInstance.reset(compInstance, ...(componentInit.args ?? []));
+            compInstance.reset(entity as any, ...(componentInit.args ?? []));
 
         }
         this._groupsRegistry.pushEntity(entity, componentInits);
