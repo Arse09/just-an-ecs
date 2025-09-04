@@ -52,9 +52,9 @@ export class ECS {
         return system;
     }
 
-    public update(dt: number): void {
+    public update<T extends object>(time: T): void {
         for (const system of this._systemsRegistry.systems) {
-            system.update(dt);
+            system.update(time);
         }
     }
 

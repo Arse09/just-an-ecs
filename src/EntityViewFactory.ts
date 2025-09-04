@@ -6,6 +6,7 @@
 
 import { ComponentConstructor } from "./Component";
 import { Entity } from "./Entity";
+import { SystemEntityType } from "./System";
 
 type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? never : K }[keyof T];
 type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>;
@@ -21,8 +22,8 @@ export interface EntityView<T = any[]> {
 
 export interface EntityViewInitializator<Components extends ComponentConstructor[] = ComponentConstructor[]> {
     components: Components;
-    onEntityAdded?: Function;
-    onEntityRemoved?: Function;
+    onEntityAdded?: (entity: EntityViewOf<Components>) => void;
+    onEntityRemoved?: (entity: EntityViewOf<Components>) => void;
 }
 
 export class EntityViewFactory {

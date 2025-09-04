@@ -10,7 +10,7 @@ export class TestPositionSystem extends System {
         onEntityRemoved: this.onEntityRemoved.bind(this),
     });
 
-    public onEntityAdded(entity: SystemEntityType<this, "view">): void {
+    public onEntityAdded(entity): void {
         entity = this.view.entities[0];
     }
 

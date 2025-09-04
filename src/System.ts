@@ -12,7 +12,7 @@ export class System implements ISystem {
 
     public ecs!: ECS;
 
-    public update(dt: number): void {
+    public update<T extends object>(time: T): void {
 
     }
 }
@@ -20,4 +20,4 @@ export class System implements ISystem {
 export type ValuesOf<T extends any[]> = T[number];
 type ArrayElement<ArrayType> = ArrayType extends (infer ElementType)[] ? ElementType : never;
 export type SystemEntityType<T extends System, View extends keyof T> =
-    (T[View] extends EntityView ? ArrayElement<T[View]['entities']> : never) | any;
+    T[View] extends EntityView<infer E> ? E : never;
