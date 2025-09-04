@@ -12,7 +12,7 @@ export class System implements ISystem {
 
     public ecs!: ECS;
 
-    public update<T extends object>(time: T): void {
+    public update(time: object): void {
 
     }
 }
