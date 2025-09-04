@@ -6,42 +6,65 @@
 
 import { ComponentConstructor } from "./Component";
 import { Entity } from "./Entity";
-import { SystemEntityType } from "./System";
 
-type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? never : K }[keyof T];
-type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>;
-type ComponentOf<T extends new (...args: any) => any> = NonFunctionProperties<InstanceType<T>>;
-
-export interface EntityView<T = any[]> {
+export interface EntityView<T = any> {
     entities: T[];
     onEntityAdded?: (entity: T) => void;
     onEntityRemoved?: (entity: T) => void;
     components: ComponentConstructor[];
     _isEntityView: boolean;
+};
+
+interface EntityViewInitializator<compsT = ComponentConstructor[]> {
+    components: compsT;
+    onEntityAdded?: Function
+    onEntityRemoved?: Function;
 }
 
-export interface EntityViewInitializator<Components extends ComponentConstructor[] = ComponentConstructor[]> {
-    components: Components;
-    onEntityAdded?: (entity: EntityViewOf<Components>) => void;
-    onEntityRemoved?: (entity: EntityViewOf<Components>) => void;
-}
+
 
 export class EntityViewFactory {
-    static createView<Components extends ComponentConstructor[]>(
-        data: EntityViewInitializator<Components>
-    ): EntityView<{ [K in keyof Components]: ComponentOf<Components[K]> } & NonFunctionProperties<Entity>> {
-
-        const view = {
-            entities: [] as Array<{ [K in keyof Components]: ComponentOf<Components[K]> } & NonFunctionProperties<Entity>>,
+    static createView: createEntityViewFunc = ((data: EntityViewInitializator): EntityView<any> => {
+        const view = <EntityView>{
+            entities: [],
             components: data.components,
             onEntityAdded: data.onEntityAdded,
             onEntityRemoved: data.onEntityRemoved,
             _isEntityView: true
-        } as EntityView<{ [K in keyof Components]: ComponentOf<Components[K]> } & NonFunctionProperties<Entity>>;
-
+        }
         return view;
-    }
+    }) as any;
 }
 
-export type EntityViewOf<Components extends ComponentConstructor[]> =
-    { [K in keyof Components]: ComponentOf<Components[K]> } & NonFunctionProperties<Entity>;
+type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? never : K }[keyof T];
+type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>;
+type ComponentOf<T extends new (...args: any) => any> = NonFunctionProperties<InstanceType<T>>;
+
+
+type createEntityViewFunc = <T extends ComponentConstructor,
+    T2 extends ComponentConstructor,
+    T3 extends ComponentConstructor,
+    T4 extends ComponentConstructor,
+    T5 extends ComponentConstructor,
+    T6 extends ComponentConstructor,
+    T7 extends ComponentConstructor,
+    T8 extends ComponentConstructor,
+    T9 extends ComponentConstructor,
+    T10 extends ComponentConstructor>(data: EntityViewInitializator<ComponentsInitList<T, T2, T3, T4, T5, T6, T7, T8, T9, T10>>)
+    => EntityView<(ComponentOf<T> & ComponentOf<T2> & ComponentOf<T3> & ComponentOf<T4> & ComponentOf<T5> & ComponentOf<T6>
+        & ComponentOf<T7> & ComponentOf<T8> & ComponentOf<T9> & ComponentOf<T10> & NonFunctionProperties<Entity>)>;
+
+
+type ComponentsInitList<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> =
+    Partial<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]> | { length: any } & {
+        '0'?: T1;
+        '1'?: T2;
+        '2'?: T3;
+        '3'?: T4;
+        '4'?: T5;
+        '5'?: T6;
+        '6'?: T7;
+        '7'?: T8;
+        '8'?: T9;
+        '9'?: T10;
+    }
