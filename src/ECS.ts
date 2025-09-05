@@ -39,7 +39,7 @@ export class ECS {
     }
 
     /**
-     * @deprecated Use entity.addComponent()
+     * @deprecated Use entity.addComps()
      * @param entity 
      * @param componentInits 
      */
