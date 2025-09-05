@@ -4,7 +4,8 @@
  * @license MIT (LICENSE.md)
  */
 
-import { Component, ComponentClass, ComponentInitializator, ComponentInitializer, ComponentInitializersOf, ComponentInstance } from "./Component";
+import { Component, ComponentClass, ComponentInitializator, ComponentInitializer, ComponentInitializersOf, ComponentInstance, ComponentInstanceOfClass } from "./Component";
+import { ComponentIndex } from "./ComponentIndex";
 import { Prettify } from "./types";
 
 export class Entity {
@@ -17,15 +18,21 @@ export class Entity {
      * @param components 
      */
     constructor(components: ComponentInitializator[]);
-    constructor(id: number, compMap: Map<ComponentClass<any>, Component<any>>);
+    constructor(id: number, compMap: Map<ComponentClass<any>, Component<any>>, compIndex: ComponentIndex);
 
-    constructor(componentsOrId: number | ComponentInitializator[], compMap?: Map<ComponentClass<any>, Component<any>>) {
-        if (typeof componentsOrId === "number" && compMap instanceof Map) {
+    constructor(componentsOrId: number | ComponentInitializator[], compMap?: Map<ComponentClass<any>, Component<any>>, compIndex?: ComponentIndex) {
+        if (typeof componentsOrId === "number" && compMap instanceof Map && compIndex instanceof ComponentIndex) {
             this.id = componentsOrId;
             this.compMap = compMap;
+            this.compIndex = compIndex;
             this.components = [];
-        } else if (typeof componentsOrId !== "number" && !(compMap instanceof Map)) {
+
+            for (const CompClass of this.compMap.keys()) {
+                this.compIndex.registerComponent(this, CompClass);
+            }
+        } else if (typeof componentsOrId !== "number" && compMap === undefined && compIndex === undefined) {
             this.components = componentsOrId;
+            this.compIndex = new ComponentIndex;
             this.compMap = new Map();
         } else {
             throw new Error("Invalid Entity constructor arguments")
@@ -35,20 +42,17 @@ export class Entity {
     // New
 
     private readonly compMap: Map<ComponentClass<any>, Component<any>>;
+    private readonly compIndex: ComponentIndex;
 
-    read<T extends Component<any>>(CompClass: ComponentClass<T>, fail: true): Readonly<Prettify<Omit<T, "reset">>>;
-    read<T extends Component<any>>(CompClass: ComponentClass<T>, fail?: false): Readonly<Prettify<Omit<T, "reset">>> | undefined;
-
-    read<T extends Component<any>>(
-        CompClass: ComponentClass<T>,
-        fail: boolean = false
-    ): Readonly<Prettify<Omit<T, "reset">>> | undefined {
-        const comp = this.compMap.get(CompClass as any); // runtime Map key
+    read<T extends Component<any>>(CompClass: ComponentClass<T>, fail: true): Readonly<Omit<T, "reset">>;
+    read<T extends Component<any>>(CompClass: ComponentClass<T>, fail?: false): Readonly<Omit<T, "reset">> | undefined;
+    read<T extends Component<any>>(CompClass: ComponentClass<T>, fail = false): Readonly<Omit<T, "reset">> | undefined {
+        const comp = this.compMap.get(CompClass);
         if (!comp) {
-            if (fail) throw new Error(`Component not found in entity`);
+            if (fail) throw new Error("Component not found");
             return undefined;
         }
-        return Object.freeze(comp) as unknown as Readonly<Prettify<Omit<T, "reset">>>;
+        return Object.freeze(comp) as unknown as Readonly<Omit<T, "reset">>;
     }
 
 
@@ -59,7 +63,7 @@ export class Entity {
         CompClass: ComponentClass<T>,
         fail: boolean = false
     ): Prettify<Omit<T, "reset">> | undefined {
-        const comp = this.compMap.get(CompClass as any);
+        const comp = this.compMap.get(CompClass);
         if (!comp) {
             if (fail) throw new Error(`Component not found in entity`);
             return undefined;
@@ -76,7 +80,11 @@ export class Entity {
         );
 
         for (let i = 0; i < compInits.length; i++) {
-            this.compMap.set(compInits[i].class, instances[i]);
+            const C = compInits[i].class;
+            const instance = instances[i];
+            this.compMap.set(C, instance);
+
+            this.compIndex.registerComponent(this, C);
         }
     }
 
@@ -84,7 +92,10 @@ export class Entity {
         ...compClasses: [...T]
     ) {
         for (let i = 0; i < compClasses.length; i++) {
-            this.compMap.delete(compClasses[i])
+            const C = compClasses[i];
+            this.compMap.delete(C);
+
+            this.compIndex.unregisterComponent(this, C);
         }
     }
 }
@@ -98,7 +109,8 @@ export class EntityFactory {
     private constructor() { }
 
     static create<InitsT extends ComponentInitializer[]>(
-        compInits: [...InitsT]
+        compInits: [...InitsT],
+        compIndex: ComponentIndex
     ): Entity {
         const entityId = this.nextEntityId++;
 
@@ -111,7 +123,7 @@ export class EntityFactory {
             compMap.set(compInits[i].class, instances[i]);
         }
 
-        return new Entity(entityId, compMap);
+        return new Entity(entityId, compMap, compIndex);
     }
 }
 

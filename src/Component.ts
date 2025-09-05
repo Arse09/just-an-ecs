@@ -110,6 +110,9 @@ export type ComponentInitializersOf<T extends readonly Component<any>[]> = {
     [K in keyof T]: ComponentInitializer<T[K]>
 };
 
+export type ComponentInstanceOfClass<C extends ComponentClass> =
+    C extends new (...args: any) => infer I ? I : never;
+
 
 // Component decorator
 export function createComponent<T extends ComponentConstructor>(target: T) {

@@ -4,17 +4,23 @@
  * @license MIT (LICENSE.md)
  */
 
-import { Component, ComponentConstructor, ComponentInitializator, ComponentInitializer, ComponentInitializersOf } from "./Component";
+import { Component, ComponentClass, ComponentConstructor, ComponentInitializator, ComponentInitializer, ComponentInitializersOf } from "./Component";
 import { Entity, EntityFactory } from "./Entity";
 import { Archetype } from "./Archetype";
 import { SystemRegistry } from "./SystemRegistry";
 import { ComponentGroupRegistry } from "./ComponentGroupRegistry";
 import { System } from "./System";
+import { Sys, SysInstance } from "./Sys";
+import { Query } from "./Query";
+import { ComponentIndex } from "./ComponentIndex";
+import { Resources } from "./Resources";
 
 export class ECS {
-
+    /** @deprecated */
     private _systemsRegistry: SystemRegistry;
+    /** @deprecated */
     private _groupsRegistry: ComponentGroupRegistry;
+    /** @deprecated */
     private _components: Component[] = [];
     /**
      * @deprecated use EntityFactory to create entities
@@ -26,10 +32,19 @@ export class ECS {
         this._groupsRegistry = new ComponentGroupRegistry();
     }
 
+    /**
+     * @deprecated Use deleteEntity()
+     * @param entity 
+     */
     public removeEntity(entity: Entity): void {
         this._groupsRegistry.removeEntity(entity);
     }
 
+    /**
+     * @deprecated Use entity.removeComps() and new components
+     * @param entity 
+     * @param componentInits 
+     */
     public removeComponentsFromEntity(entity: Entity, components: ComponentConstructor[] | ComponentConstructor): void {
         if (!(components instanceof Array)) {
             this._groupsRegistry.removeComponentFromEntity(entity, components);
@@ -39,7 +54,7 @@ export class ECS {
     }
 
     /**
-     * @deprecated Use entity.addComps()
+     * @deprecated Use entity.addComps() and new components
      * @param entity 
      * @param componentInits 
      */
@@ -54,16 +69,15 @@ export class ECS {
     }
 
 
+    /**
+     * @deprecated Use registerSys() and new system class (Sys)
+     * @param system 
+     * @returns 
+     */
     public registerSystem<T extends System = System>(system: T): T {
         system.ecs = this;
-        this._systemsRegistry.register(system, this._groupsRegistry);
+        this._systemsRegistry.legacyRegister(system, this._groupsRegistry);
         return system;
-    }
-
-    public update<T extends object>(time: T): void {
-        for (const system of this._systemsRegistry.systems) {
-            system.update(time);
-        }
     }
 
     /**
@@ -79,6 +93,7 @@ export class ECS {
     }
 
 
+    /** @deprecated */
     private _getComponentInstance<T extends Component>(component: ComponentConstructor<T>): T {
         if (!this._components[component.id]) {
             this._components[component.id] = new component();
@@ -90,7 +105,27 @@ export class ECS {
         return components;
     }
 
+    public update<T extends object>(time: T): void {
+        for (const system of this._systemsRegistry.systems) {
+            system.update(time);
+        }
+
+        // New
+
+        for (const sys of this.sysRegistry.sys) {
+            sys.update();
+        }
+
+        this._deleteFlaggedEntities();
+    }
+
     // New
+
+    private readonly sysRegistry = new SystemRegistry();
+    private readonly compIndex = new ComponentIndex();
+
+    private readonly entitiesToDelete: Set<Entity> = new Set();
+
 
     /**
      * Creates a new entity with the given componets
@@ -104,18 +139,64 @@ export class ECS {
             'args' in init ? { class: init.class, args: init.args } : { class: init.class }
         );
 
-        const entity = EntityFactory.create(initializers);
+        const entity = EntityFactory.create(initializers, this.compIndex);
         return entity;
+    }
+
+    /**
+     * Deletes an entity at the end of the update.
+     * @param entity The entity to delete
+     */
+    public deleteEntity(entity: Entity) {
+        this.entitiesToDelete.add(entity);
+    }
+
+    /**
+     * Registers systems to the ECS.
+     * @param system A system (Sys)
+     * @param systems Extra systems
+     */
+    public registerSys<ST extends SysInstance, const SsT extends SysInstance[]>(system: ST, ...systems: [...SsT]) {
+        type Ss = [ST, ...SsT];
+        const allSys: Ss = [system, ...systems];
+
+        for (const sys of allSys) {
+            this.sysRegistry.register(sys);
+        }
+    }
+
+    /**
+     * Queries all the entities that have the specified components
+     * @param comps Requiered components
+     * @returns An iterable query
+     */
+    public query<const T extends readonly ComponentClass<any>[]>(...comps: [...T]): Query<T> {
+        return new Query(this.compIndex, [...comps]);
+    }
+
+    public queryRes(): Resources {
+        return new Resources();
+    }
+
+
+    private _deleteFlaggedEntities() {
+        for (const entity of this.entitiesToDelete) {
+            this.compIndex.removeEntity(entity);
+        }
+        this.entitiesToDelete.clear()
     }
 
 }
 
 
+/** @deprecated */
 type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? never : K }[keyof T];
+/** @deprecated */
 type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>;
+/** @deprecated */
 type ComponentOf<T extends ComponentInitializator> = NonFunctionProperties<InstanceType<T['component']>>;
 
-
+/** @deprecated */
 type createEntityFunc = <T extends ComponentInitializator,
     T2 extends ComponentInitializator,
     T3 extends ComponentInitializator,
@@ -129,7 +210,7 @@ type createEntityFunc = <T extends ComponentInitializator,
     => ComponentOf<T> & ComponentOf<T2> & ComponentOf<T3> & ComponentOf<T4> & ComponentOf<T5> & ComponentOf<T6>
     & ComponentOf<T7> & ComponentOf<T8> & ComponentOf<T9> & ComponentOf<T10> & Entity;
 
-
+/** @deprecated */
 type ComponentsInitList<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> =
     Partial<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]> | { length: any } & {
         '0'?: T1;

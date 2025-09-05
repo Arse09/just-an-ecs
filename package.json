@@ -6,24 +6,24 @@
   "module": "build/index.js",
   "types": "build/index.d.ts",
   "scripts": {
+    "test": "mocha",
     "build": "tsc",
     "dev": "tsc -w"
   },
   "license": "MIT",
-  "author": "Fireveined",
+  "author": "Arse09",
   "contributors": [
-    "Arse09"
+    "Fireveined"
   ],
-  "dependencies": {},
   "devDependencies": {
-    "@types/chai": "^4.1.7",
-    "@types/mocha": "^5.2.5",
-    "@types/sinon": "^7.0.5",
-    "chai": "^4.2.0",
-    "mocha": "^5.2.0",
-    "sinon": "^7.2.3",
-    "sinon-chai": "^3.3.0",
-    "ts-node": "^8.0.2",
-    "typescript": "^3.3.3"
+    "@types/chai": "^5.2.2",
+    "@types/mocha": "^10.0.10",
+    "@types/sinon": "^17.0.4",
+    "chai": "^6.0.1",
+    "mocha": "^11.7.2",
+    "sinon": "^21.0.0",
+    "sinon-chai": "^4.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
   }
 }
