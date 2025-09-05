@@ -1,7 +1,7 @@
 /**
- * @author fireveined
+ * @original MIT code fireveined (OLDLICENSE.md)
  * @contributor Arse09
- * @license MIT
+ * @license MIT (LICENSE.md)
  */
 
 import { ComponentConstructor } from "./Component";

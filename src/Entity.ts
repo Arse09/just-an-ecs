@@ -1,10 +1,10 @@
 /**
- * @author fireveined
+ * @original MIT code fireveined (OLDLICENSE.md)
  * @contributor Arse09
- * @license MIT
+ * @license MIT (LICENSE.md)
  */
 
-import { Component, ComponentClass, ComponentInitializator, ComponentInitializer, ComponentInstance } from "./Component";
+import { Component, ComponentClass, ComponentInitializator, ComponentInitializer, ComponentInitializersOf, ComponentInstance } from "./Component";
 import { Prettify } from "./types";
 
 export class Entity {
@@ -66,6 +66,19 @@ export class Entity {
         }
         return comp as unknown as Prettify<Omit<T, "reset">>;
     }
+
+    // Components API
+    addComponents<const T extends readonly Component<any>[]>(
+        ...compInits: ComponentInitializersOf<T>
+    ) {
+        const instances = compInits.map(init =>
+            'args' in init ? new init.class(init.args) : new init.class()
+        );
+
+        for (let i = 0; i < compInits.length; i++) {
+            this.compMap.set(compInits[i].class, instances[i]);
+        }
+    }
 }
 
 
@@ -74,8 +87,10 @@ export class Entity {
 export class EntityFactory {
     private static nextEntityId = 0;
 
-    static create<Inits extends ComponentInitializer[]>(
-        compInits: [...Inits]
+    private constructor() { }
+
+    static create<InitsT extends ComponentInitializer[]>(
+        compInits: [...InitsT]
     ): Entity {
         const entityId = this.nextEntityId++;
 

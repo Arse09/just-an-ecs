@@ -1,3 +1,9 @@
+/**
+ * @original MIT code fireveined (OLDLICENSE.md)
+ * @contributor Arse09
+ * @license MIT (LICENSE.md)
+ */
+
 export { getComponentsHashFromInitializators } from "./ComponentGroupHash"
 export { EntityViewFactory } from "./EntityViewFactory";
 export { System, SystemEntityType } from "./System";

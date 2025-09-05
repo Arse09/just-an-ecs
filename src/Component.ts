@@ -1,7 +1,7 @@
 /**
- * @author fireveined
+ * @original MIT code fireveined (OLDLICENSE.md)
  * @contributor Arse09
- * @license MIT
+ * @license MIT (LICENSE.md)
  */
 
 type NonFunctionPropertyNames<T> = {
@@ -106,6 +106,9 @@ export type ComponentClass<T extends Component<any> = Component<any>> =
     : new (args: ArgsT) => T
     : never;
 
+export type ComponentInitializersOf<T extends readonly Component<any>[]> = {
+    [K in keyof T]: ComponentInitializer<T[K]>
+};
 
 
 // Component decorator

@@ -1,10 +1,10 @@
 /**
- * @author fireveined
+ * @original MIT code fireveined (OLDLICENSE.md)
  * @contributor Arse09
- * @license MIT
+ * @license MIT (LICENSE.md)
  */
 
-import { Component, ComponentConstructor, ComponentInitializator, ComponentInitializer } from "./Component";
+import { Component, ComponentConstructor, ComponentInitializator, ComponentInitializer, ComponentInitializersOf } from "./Component";
 import { Entity, EntityFactory } from "./Entity";
 import { Archetype } from "./Archetype";
 import { SystemRegistry } from "./SystemRegistry";
@@ -38,6 +38,11 @@ export class ECS {
         }
     }
 
+    /**
+     * @deprecated Use entity.addComponent()
+     * @param entity 
+     * @param componentInits 
+     */
     public addComponentsToEntity(entity: Entity, componentInits: ComponentInitializator[]): void {
         entity.components.push(...componentInits);
         for (const componentInit of componentInits) {
@@ -63,8 +68,8 @@ export class ECS {
 
     /**
      * @deprecated Use newEntity()
-     * @param components Array of ComponentInitializator
-     * @returns the Entity
+     * @param components
+     * @returns
      */
     public createEntity<T extends Component[]>(components: ComponentInitializator<T[number]>[]): Entity {
         const entity = new Entity([]);
@@ -87,24 +92,14 @@ export class ECS {
 
     // New
 
-    public addComponentToEntity<C extends Component<any>>(entity: Entity, compInit: C extends Component<infer ArgsT>
-        ? ArgsT extends void
-        ? { class: new () => C }
-        : { class: new (args: ArgsT) => C; args: ArgsT }
-        : never
-    ) {
-        // TODO
-    }
-
+    /**
+     * Creates a new entity with the given componets
+     * @param compInits Components to create the entity with
+     * @returns The entity
+     */
     public newEntity<const T extends readonly Component<any>[]>(
-        ...compInits: {
-            [K in keyof T]: T[K] extends Component<infer ArgsT>
-            ? ArgsT extends void
-            ? { class: new () => T[K] }
-            : { class: new (args: ArgsT) => T[K]; args: ArgsT }
-            : never
-        }
-    ) {
+        ...compInits: ComponentInitializersOf<T>
+    ): Entity {
         const initializers: ComponentInitializer[] = compInits.map(init =>
             'args' in init ? { class: init.class, args: init.args } : { class: init.class }
         );
