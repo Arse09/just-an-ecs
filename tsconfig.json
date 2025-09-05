@@ -1,24 +1,34 @@
 {
   "compilerOptions": {
-    "target": "es2024",
-    "lib": [
-      "es2024",
-      "dom"
-    ],
-    "declaration": true,
-    "outDir": "build",
-    "strict": true,
-    "esModuleInterop": true,
+    /* Decorators */
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+
+    /* Base Options */
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "allowJs": false,
+    "resolveJsonModule": true,
+    "verbatimModuleSyntax": true,
+    "declaration": true,
+    "declarationMap": true,
+    "outDir": "build",
+    "sourceMap": true,
+    "composite": false,
+
+    /* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Library */
+    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+
+    /* Other */
     "skipLibCheck": true
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "build",
-    "wasm_modules",
-    "new-tests"
-  ]
+  "include": ["src"],
+  "exclude": ["build", "node_modules", "tests"]
 }

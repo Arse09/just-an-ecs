@@ -1,4 +1,10 @@
-import { ComponentConstructor, ComponentInitializator } from './Component';
+/**
+ * @original MIT code fireveined (OLDLICENSE.md)
+ * @contributor Arse09
+ * @license MIT (LICENSE.md)
+ */
+
+import type { ComponentConstructor, ComponentInitializator } from './Component';
 
 function bit_test(num: number, bit: number) {
     return ((num >> bit) % 2 != 0)

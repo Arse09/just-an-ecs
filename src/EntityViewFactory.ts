@@ -4,7 +4,7 @@
  * @license MIT (LICENSE.md)
  */
 
-import { ComponentConstructor } from "./Component";
+import { type ComponentConstructor } from "./Component";
 import { Entity } from "./Entity";
 
 type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? never : K }[keyof T];

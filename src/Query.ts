@@ -3,7 +3,7 @@
  * @license MIT (LICENSE.md)
  */
 
-import { ComponentClass } from "./Component";
+import { type ComponentClass } from "./Component";
 import { ComponentIndex } from "./ComponentIndex";
 import { Entity } from "./Entity";
 

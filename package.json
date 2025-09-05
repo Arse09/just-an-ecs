@@ -2,11 +2,10 @@
   "name": "perform-ecs",
   "version": "1.0.0",
   "description": "Efficient Entity Component System framework",
-  "main": "build/index.js",
-  "module": "build/index.js",
-  "types": "build/index.d.ts",
+  "type": "module",
+  "main": "./build/index.js",
+  "types": "./build/index.d.ts",
   "scripts": {
-    "test": "mocha",
     "build": "tsc",
     "dev": "tsc -w"
   },

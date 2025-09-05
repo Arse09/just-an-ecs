@@ -4,10 +4,10 @@
  * @license MIT (LICENSE.md)
  */
 
-import { ISystem } from "./ISystem";
-import { EntityView } from "./EntityViewFactory";
+import { type ISystem } from "./ISystem";
+import { type EntityView } from "./EntityViewFactory";
 import { ComponentGroupRegistry } from "./ComponentGroupRegistry";
-import { SysInstance } from "./Sys";
+import { type SysInstance } from "./Sys";
 
 /** @deprecated */
 function isEntityView(obj: any): obj is EntityView {

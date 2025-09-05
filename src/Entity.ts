@@ -4,9 +4,9 @@
  * @license MIT (LICENSE.md)
  */
 
-import { Component, ComponentClass, ComponentInitializator, ComponentInitializer, ComponentInitializersOf, ComponentInstance, ComponentInstanceOfClass } from "./Component";
+import { Component, type ComponentClass, type ComponentInitializator, type ComponentInitializer, type ComponentInitializersOf } from "./Component";
 import { ComponentIndex } from "./ComponentIndex";
-import { Prettify } from "./types";
+import { type Prettify } from "./types";
 
 export class Entity {
     public id!: number;
@@ -52,7 +52,7 @@ export class Entity {
             if (fail) throw new Error("Component not found");
             return undefined;
         }
-        return Object.freeze({...comp}) as unknown as Readonly<Omit<T, "reset">>;
+        return Object.freeze({ ...comp }) as unknown as Readonly<Omit<T, "reset">>;
     }
 
 
@@ -75,16 +75,12 @@ export class Entity {
     addComps<const T extends readonly Component<any>[]>(
         ...compInits: ComponentInitializersOf<T>
     ) {
-        const instances = compInits.map(init =>
-            'args' in init ? new init.class(init.args) : new init.class()
-        );
+        for (const compInit of compInits) {
+            const instance = 'args' in compInit ? new compInit.class(compInit.args) : new compInit.class();
 
-        for (let i = 0; i < compInits.length; i++) {
-            const C = compInits[i].class;
-            const instance = instances[i];
-            this.compMap.set(C, instance);
+            this.compMap.set(compInit.class, instance);
 
-            this.compIndex.registerComponent(this, C);
+            this.compIndex.registerComponent(this, compInit.class);
         }
     }
 
@@ -119,8 +115,10 @@ export class EntityFactory {
         );
 
         const compMap = new Map<ComponentClass<any>, Component<any>>();
-        for (let i = 0; i < compInits.length; i++) {
-            compMap.set(compInits[i].class, instances[i]);
+        for (const compInit of compInits) {
+            const instance = 'args' in compInit ? new compInit.class(compInit.args) : new compInit.class();
+
+            compMap.set(compInit.class, instance);
         }
 
         return new Entity(entityId, compMap, compIndex);

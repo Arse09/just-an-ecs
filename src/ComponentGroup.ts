@@ -1,6 +1,11 @@
+/**
+ * @original MIT code fireveined (OLDLICENSE.md)
+ * @contributor Arse09
+ * @license MIT (LICENSE.md)
+ */
 
-import { componentHashHasComponent, componentHashMatch, getComponentsHash, ComponentsHash } from "./ComponentGroupHash";
-import { ComponentConstructor, ComponentInitializator } from './Component';
+import { componentHashHasComponent, componentHashMatch, getComponentsHash, type ComponentsHash } from "./ComponentGroupHash";
+import type { ComponentConstructor } from './Component';
 import { Entity } from './Entity';
 
 export const aa = {};

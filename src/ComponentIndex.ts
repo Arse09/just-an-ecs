@@ -4,7 +4,7 @@
  */
 
 import { Entity } from "./Entity";
-import { ComponentClass } from "./Component";
+import { type ComponentClass } from "./Component";
 
 export class ComponentIndex {
     private readonly index = new Map<ComponentClass<any>, Set<Entity>>();
@@ -55,6 +55,8 @@ export class ComponentIndex {
         const smallest = sets[0];
         const others = sets.slice(1);
         const out: Entity[] = [];
+
+        if (!smallest) return out;
 
         for (const e of smallest) {
             let ok = true;

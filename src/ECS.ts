@@ -4,13 +4,13 @@
  * @license MIT (LICENSE.md)
  */
 
-import { Component, ComponentClass, ComponentConstructor, ComponentInitializator, ComponentInitializer, ComponentInitializersOf } from "./Component";
+import { Component, type ComponentClass, type ComponentConstructor, type ComponentInitializator, type ComponentInitializer, type ComponentInitializersOf } from "./Component";
 import { Entity, EntityFactory } from "./Entity";
-import { Archetype } from "./Archetype";
+import { type Archetype } from "./Archetype";
 import { SystemRegistry } from "./SystemRegistry";
 import { ComponentGroupRegistry } from "./ComponentGroupRegistry";
 import { System } from "./System";
-import { Sys, SysConstructor, SysInstance } from "./Sys";
+import { type SysConstructor } from "./Sys";
 import { Query } from "./Query";
 import { ComponentIndex } from "./ComponentIndex";
 import { Resources } from "./Resources";

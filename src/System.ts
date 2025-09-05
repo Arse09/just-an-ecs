@@ -5,8 +5,8 @@
  */
 
 import { ECS } from "./ECS";
-import { EntityView } from "./EntityViewFactory";
-import { ISystem } from "./ISystem";
+import { type EntityView } from "./EntityViewFactory";
+import { type ISystem } from "./ISystem";
 
 export class System implements ISystem {
 
