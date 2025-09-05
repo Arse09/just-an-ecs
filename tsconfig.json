@@ -18,6 +18,7 @@
   ],
   "exclude": [
     "build",
-    "wasm_modules"
+    "wasm_modules",
+    "new-tests"
   ]
 }
