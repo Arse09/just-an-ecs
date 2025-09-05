@@ -25,6 +25,7 @@ export class TestVelocityC extends Component<{ vx: number; vy: number }> {
 export class TestEmptyC extends Component<void> { }
 
 // Systems
+
 export class TestMovementS extends Sys implements SysInstance {
     readonly query = this.ecs.query(TestPositionC, TestVelocityC);
     readonly res = this.ecs.queryRes();
@@ -46,7 +47,7 @@ const ecs = new ECS();
 
 ecs.registerSys(new TestMovementS)
 
-const asd = ecs.newEntity(
+const entity = ecs.newEntity(
     { class: TestPositionC, args: { x: 0, y: 0 } },
     { class: TestEmptyC },
 )

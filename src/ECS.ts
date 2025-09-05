@@ -10,7 +10,7 @@ import { Archetype } from "./Archetype";
 import { SystemRegistry } from "./SystemRegistry";
 import { ComponentGroupRegistry } from "./ComponentGroupRegistry";
 import { System } from "./System";
-import { Sys, SysInstance } from "./Sys";
+import { Sys, SysConstructor, SysInstance } from "./Sys";
 import { Query } from "./Query";
 import { ComponentIndex } from "./ComponentIndex";
 import { Resources } from "./Resources";
@@ -101,6 +101,7 @@ export class ECS {
         return this._components[component.id] as T;
     }
 
+    /** @deprecated */
     public createArchetype(components: ComponentInitializator[]): Archetype {
         return components;
     }
@@ -156,14 +157,15 @@ export class ECS {
      * @param system A system (Sys)
      * @param systems Extra systems
      */
-    public registerSys<ST extends SysInstance, const SsT extends SysInstance[]>(system: ST, ...systems: [...SsT]) {
-        type Ss = [ST, ...SsT];
-        const allSys: Ss = [system, ...systems];
-
-        for (const sys of allSys) {
-            this.sysRegistry.register(sys);
+    public registerSys<const Ss extends SysConstructor[]>(
+        ...systems: Ss
+    ) {
+        for (const SysClass of systems) {
+            const instance = new SysClass(this);
+            this.sysRegistry.register(instance);
         }
     }
+
 
     /**
      * Queries all the entities that have the specified components
@@ -174,8 +176,12 @@ export class ECS {
         return new Query(this.compIndex, [...comps]);
     }
 
+    /**
+     * @experimental
+     * @returns 
+     */
     public queryRes(): Resources {
-        return new Resources();
+        return new Resources(); // TODO: Resources
     }
 
 

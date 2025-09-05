@@ -9,8 +9,8 @@ import { Query } from "./Query";
 import { Resources, Ticker } from "./Resources";
 
 export interface SysInstance {
-    readonly ecs: ECS;
-    readonly query: Query<any>;
+    ecs: ECS;
+    readonly [query: `query${string}`]: Query<any>;
     readonly res?: Resources; // TODO: Resources
 
     onEntityAdded?(entity: Entity): void;
@@ -20,6 +20,13 @@ export interface SysInstance {
     update(): void;
 }
 
+export type SysConstructor<T extends SysInstance = SysInstance> = new (...args: any[]) => T;
+
 export abstract class Sys {
-    readonly ecs!: ECS;
+    readonly ecs: ECS;
+    readonly [query: `query${string}`]: Query<any>;
+
+    constructor(ecs: ECS) {
+        this.ecs = ecs;
+    }
 }

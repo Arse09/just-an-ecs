@@ -89,16 +89,8 @@ ecs.update(delta);
 ```
 
 ## Docs
-Coming soon
 
 ## ToDo
-
-- [ ] Documentation
-- [ ] Benchmarks
-- [ ] More valuable tests
-- [ ] Check support for vanilla JS
-- [ ] Clean codebase
-- [ ] Multiple system views types, suitable for different cases, eg. when entities are removed/added very often.
 
 ## License
 
