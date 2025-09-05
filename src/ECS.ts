@@ -113,6 +113,8 @@ export class ECS {
 
         // New
 
+        this.resources.ticker.update()
+
         for (const sys of this.sysRegistry.sys) {
             sys.update();
         }
@@ -126,6 +128,8 @@ export class ECS {
     private readonly compIndex = new ComponentIndex();
 
     private readonly entitiesToDelete: Set<Entity> = new Set();
+
+    private readonly resources = new Resources();
 
 
     /**
@@ -181,7 +185,7 @@ export class ECS {
      * @returns 
      */
     public queryRes(): Resources {
-        return new Resources(); // TODO: Resources
+        return this.resources; // TODO: Resources
     }
 
 
