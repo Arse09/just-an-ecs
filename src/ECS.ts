@@ -4,8 +4,8 @@
  * @license MIT
  */
 
-import { Component, ComponentConstructor, ComponentInitializator } from "./Component";
-import { Entity } from "./Entity";
+import { Component, ComponentConstructor, ComponentInitializator, ComponentInitializer } from "./Component";
+import { Entity, EntityFactory } from "./Entity";
 import { Archetype } from "./Archetype";
 import { SystemRegistry } from "./SystemRegistry";
 import { ComponentGroupRegistry } from "./ComponentGroupRegistry";
@@ -16,6 +16,9 @@ export class ECS {
     private _systemsRegistry: SystemRegistry;
     private _groupsRegistry: ComponentGroupRegistry;
     private _components: Component[] = [];
+    /**
+     * @deprecated use EntityFactory to create entities
+     */
     private _currentID: number = 0;
 
     constructor() {
@@ -58,6 +61,11 @@ export class ECS {
         }
     }
 
+    /**
+     * @deprecated Use newEntity()
+     * @param components Array of ComponentInitializator
+     * @returns the Entity
+     */
     public createEntity<T extends Component[]>(components: ComponentInitializator<T[number]>[]): Entity {
         const entity = new Entity([]);
         entity.id = this._currentID++;
@@ -75,6 +83,34 @@ export class ECS {
 
     public createArchetype(components: ComponentInitializator[]): Archetype {
         return components;
+    }
+
+    // New
+
+    public addComponentToEntity<C extends Component<any>>(entity: Entity, compInit: C extends Component<infer ArgsT>
+        ? ArgsT extends void
+        ? { class: new () => C }
+        : { class: new (args: ArgsT) => C; args: ArgsT }
+        : never
+    ) {
+        // TODO
+    }
+
+    public newEntity<const T extends readonly Component<any>[]>(
+        ...compInits: {
+            [K in keyof T]: T[K] extends Component<infer ArgsT>
+            ? ArgsT extends void
+            ? { class: new () => T[K] }
+            : { class: new (args: ArgsT) => T[K]; args: ArgsT }
+            : never
+        }
+    ) {
+        const initializers: ComponentInitializer[] = compInits.map(init =>
+            'args' in init ? { class: init.class, args: init.args } : { class: init.class }
+        );
+
+        const entity = EntityFactory.create(initializers);
+        return entity;
     }
 
 }
@@ -96,19 +132,19 @@ type createEntityFunc = <T extends ComponentInitializator,
     T9 extends ComponentInitializator,
     T10 extends ComponentInitializator>(comps: ComponentsInitList<T, T2, T3, T4, T5, T6, T7, T8, T9, T10>)
     => ComponentOf<T> & ComponentOf<T2> & ComponentOf<T3> & ComponentOf<T4> & ComponentOf<T5> & ComponentOf<T6>
-    & ComponentOf<T7> & ComponentOf<T8> & ComponentOf<T9> & ComponentOf<T10> & Entity ;
+    & ComponentOf<T7> & ComponentOf<T8> & ComponentOf<T9> & ComponentOf<T10> & Entity;
 
 
 type ComponentsInitList<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> =
     Partial<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]> | { length: any } & {
-    '0'?: T1;
-    '1'?: T2;
-    '2'?: T3;
-    '3'?: T4;
-    '4'?: T5;
-    '5'?: T6;
-    '6'?: T7;
-    '7'?: T8;
-    '8'?: T9;
-    '9'?: T10;
-}
+        '0'?: T1;
+        '1'?: T2;
+        '2'?: T3;
+        '3'?: T4;
+        '4'?: T5;
+        '5'?: T6;
+        '6'?: T7;
+        '7'?: T8;
+        '8'?: T9;
+        '9'?: T10;
+    }
