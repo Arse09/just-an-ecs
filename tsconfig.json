@@ -1,34 +1,32 @@
-{
-  "compilerOptions": {
-    /* Decorators */
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
+  {
+    "compilerOptions": {
+      /* Decorators */
+      "experimentalDecorators": true,
 
-    /* Base Options */
-    "target": "ES2022",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "esModuleInterop": true,
-    "allowJs": false,
-    "resolveJsonModule": true,
-    "verbatimModuleSyntax": true,
-    "declaration": true,
-    "declarationMap": true,
-    "outDir": "build",
-    "sourceMap": true,
-    "composite": false,
+      /* Base Options */
+      "target": "ES2022",
+      "module": "esnext",
+      "moduleResolution": "bundler",
+      "esModuleInterop": true,
+      "allowJs": true,
+      "resolveJsonModule": true,
+      "verbatimModuleSyntax": true,
+      "declaration": true,
+      "declarationMap": true,
+      "outDir": "dist",
+      "sourceMap": true,
 
-    /* Strictness */
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "forceConsistentCasingInFileNames": true,
+      /* Strictness */
+      "strict": true,
+      "noUncheckedIndexedAccess": true,
+      "forceConsistentCasingInFileNames": true,
 
-    /* Library */
-    "lib": ["ES2024", "DOM", "DOM.Iterable"],
+      /* Library */
+      "lib": ["ES2024", "DOM", "DOM.Iterable"],
 
-    /* Other */
-    "skipLibCheck": true
-  },
-  "include": ["src"],
-  "exclude": ["build", "node_modules", "tests"]
-}
+      /* Other */
+      "skipLibCheck": true
+    },
+    "include": ["src"],
+    "exclude": ["build", "node_modules", "tests"]
+  }

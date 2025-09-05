@@ -33,7 +33,7 @@ export interface ComponentInitializator<T extends Component = Component> {
  * 
  * @example
  * - Old component:
-    import { Component, makeComponent } from "perform-ecs";
+    import { Component, makeComponent } from "just-an-ecs";
 
     interface Args {
         vx: number;
@@ -51,7 +51,7 @@ export interface ComponentInitializator<T extends Component = Component> {
     }
  * 
  * - New component:
-    import { Component, createComponent } from "perform-ecs";
+    import { Component, createComponent } from "just-an-ecs";
 
     // Ignore the "\"
     \@createComponent

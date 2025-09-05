@@ -1,13 +1,20 @@
 {
-  "name": "perform-ecs",
+  "name": "just-an-ecs",
   "version": "1.0.0",
   "description": "Efficient Entity Component System framework",
   "type": "module",
-  "main": "./build/index.js",
-  "types": "./build/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc -w"
+    "build": "tsc ",
+    "dev": "tsc --watch"
   },
   "license": "MIT",
   "author": "Arse09",

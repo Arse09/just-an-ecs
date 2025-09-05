@@ -9,7 +9,7 @@ import { Query } from "./Query";
 import { Resources, Ticker } from "./Resources";
 
 export interface SysInstance {
-    ecs: ECS;
+    readonly ecs: ECS;
     readonly [query: `query${string}`]: Query<any>;
     readonly res?: Resources; // TODO: Resources
 
