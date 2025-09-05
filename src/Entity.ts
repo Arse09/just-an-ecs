@@ -52,7 +52,7 @@ export class Entity {
             if (fail) throw new Error("Component not found");
             return undefined;
         }
-        return Object.freeze(comp) as unknown as Readonly<Omit<T, "reset">>;
+        return Object.freeze({...comp}) as unknown as Readonly<Omit<T, "reset">>;
     }
 
 
