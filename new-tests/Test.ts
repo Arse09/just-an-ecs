@@ -6,6 +6,8 @@
 import { Component, createComponent } from "../src/Component";
 import { ECS } from "../src/ECS"
 
+// Components
+
 @createComponent
 export class TestPositionC extends Component<{ x: number; y: number }> {
     public x = this.args.x;
@@ -21,6 +23,8 @@ export class TestVelocityC extends Component<{ vx: number; vy: number }> {
 @createComponent
 export class TestEmptyC extends Component<void> { }
 
+// ECS
+
 const ecs = new ECS();
 
 const asd = ecs.newEntity(
@@ -28,6 +32,7 @@ const asd = ecs.newEntity(
     { class: TestEmptyC },
 )
 
-asd.addComponents({class: TestEmptyC})
+asd.addComponents({ class: TestEmptyC })
+asd.removeComponents(TestEmptyC)
 
 const comp = asd.read(TestPositionC, true);

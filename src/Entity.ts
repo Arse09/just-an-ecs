@@ -68,7 +68,7 @@ export class Entity {
     }
 
     // Components API
-    addComponents<const T extends readonly Component<any>[]>(
+    addComps<const T extends readonly Component<any>[]>(
         ...compInits: ComponentInitializersOf<T>
     ) {
         const instances = compInits.map(init =>
@@ -77,6 +77,14 @@ export class Entity {
 
         for (let i = 0; i < compInits.length; i++) {
             this.compMap.set(compInits[i].class, instances[i]);
+        }
+    }
+
+    removeComps<const T extends readonly ComponentClass<any>[]>(
+        ...compClasses: [...T]
+    ) {
+        for (let i = 0; i < compClasses.length; i++) {
+            this.compMap.delete(compClasses[i])
         }
     }
 }
