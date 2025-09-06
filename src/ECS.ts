@@ -22,9 +22,18 @@ import { SysRegistry, type SysConstructor } from "./Sys";
 
 
 export class ECS {
+    private systemsSetUp: boolean = false;
+
     constructor() { }
 
     public update(): void {
+        if (!this.systemsSetUp) {
+            for (const sys of this.sysRegistry.sys) {
+                if (sys.setup) sys.setup();
+            }
+            this.systemsSetUp = true;
+        }
+
         for (const sys of this.sysRegistry.sys) {
             sys.update();
         }

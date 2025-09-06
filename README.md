@@ -59,6 +59,12 @@ import { Sys, type SysInstance } from "@arse09/just-an-ecs";
 export class TestTickUpdaterS extends Sys implements SysInstance {
     readonly res = this.ecs.queryRes(TestTickR);
 
+    // Runs in the first ecs.update() before the update fn | not required
+    setup(): void {
+        // Do something at the start
+    }
+
+    // Runs every ecs.update() | required
     update(): void {
         const tick = this.res.write(TestTickR, true);
 
@@ -68,7 +74,6 @@ export class TestTickUpdaterS extends Sys implements SysInstance {
         tick.lastSec = nowSec;
 
         console.log("tick", tick);
-
     }
 }
 

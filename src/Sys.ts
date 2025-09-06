@@ -14,8 +14,8 @@ export interface SysInstance {
     readonly [query: `query${string}`]: Query<any>;
     readonly [res: `res${string}`]: ResQuery<any>;
 
-    onEntityAdded?(entity: Entity): void;
-    onEntityRemoved?(entity: Entity): void;
+    // TODO: onEntityAdded?(entity: Entity): void;
+    // TODO: onEntityRemoved?(entity: Entity): void;
 
     setup?(): void;
     update(): void;
