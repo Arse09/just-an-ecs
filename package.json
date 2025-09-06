@@ -1,7 +1,7 @@
 {
-  "name": "just-an-ecs",
+  "name": "@arse09/just-an-ecs",
   "version": "1.0.0",
-  "description": "Efficient Entity Component System framework",
+  "description": "A really basic ecs for the browser.",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -19,7 +19,7 @@
   "license": "MIT",
   "author": "Arse09",
   "contributors": [
-    "Fireveined"
+    "fireveined"
   ],
   "devDependencies": {
     "ts-node": "^10.9.2",
