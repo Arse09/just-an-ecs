@@ -5,28 +5,11 @@
 
 import type { ResClass, Resource } from "./Resource";
 
-export class ResourceRegistry {
-    private readonly _resources = new Map<ResClass<Resource<any>>, Resource<any>>();
-
-    get res() {
-        return this._resources;
-    }
-
-    public register<ResT extends Resource<any>>(resClass: ResClass<ResT>, resource: ResT) {
-        this._resources.set(resClass, resource);
-    }
-
-    public get<const ResT extends Resource<any>>(resClass: ResClass<ResT>): ResT {
-        return this._resources.get(resClass) as ResT;
-    }
-}
-
-
 export class ResQuery<const Rs extends readonly ResClass<any>[]> {
     private readonly _resources: Rs;
-    private readonly resRegistry: ResourceRegistry;
+    private readonly resRegistry: ResRegistry;
 
-    constructor(resRegistry: ResourceRegistry, resources: [...Rs]) {
+    constructor(resRegistry: ResRegistry, resources: [...Rs]) {
         this.resRegistry = resRegistry;
         this._resources = resources;
     }
@@ -54,5 +37,21 @@ export class ResQuery<const Rs extends readonly ResClass<any>[]> {
             return undefined;
         }
         return comp;
+    }
+}
+
+export class ResRegistry {
+    private readonly _resources = new Map<ResClass<Resource<any>>, Resource<any>>();
+
+    get res() {
+        return this._resources;
+    }
+
+    public register<ResT extends Resource<any>>(resClass: ResClass<ResT>, resource: ResT) {
+        this._resources.set(resClass, resource);
+    }
+
+    public get<const ResT extends Resource<any>>(resClass: ResClass<ResT>): ResT {
+        return this._resources.get(resClass) as ResT;
     }
 }
