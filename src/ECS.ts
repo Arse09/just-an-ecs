@@ -10,121 +10,21 @@ import { ComponentIndex } from "./ComponentIndex";
 import {
     Component,
     type ComponentClass,
-    type ComponentConstructor,
-    type ComponentInitializator,
     type ComponentInitializer,
     type ComponentInitializersOf
 } from "./Component";
 
-import { ResourceRegistry, ResQuery } from "./ResourceRegistry";
-import { Resource, ResourcesOld, type ResClass, type ResInitializersOf } from "./Resource";
+import { ResRegistry, ResQuery } from "./ResQuery";
+import { Resource, type ResClass, type ResInitializersOf } from "./Resource";
 
 import { Query } from "./Query";
-import { SystemRegistry } from "./SystemRegistry";
-import { type SysConstructor } from "./Sys";
+import { SysRegistry, type SysConstructor } from "./Sys";
 
-import { type Archetype } from "./Archetype";
-import { ComponentGroupRegistry } from "./ComponentGroupRegistry";
-import { System } from "./System";
 
 export class ECS {
-    /** @deprecated */
-    private _systemsRegistry: SystemRegistry;
-    /** @deprecated */
-    private _groupsRegistry: ComponentGroupRegistry;
-    /** @deprecated */
-    private _components: Component[] = [];
-    /**
-     * @deprecated use EntityFactory to create entities
-     */
-    private _currentID: number = 0;
+    constructor() { }
 
-    constructor() {
-        this._systemsRegistry = new SystemRegistry();
-        this._groupsRegistry = new ComponentGroupRegistry();
-    }
-
-    /**
-     * @deprecated Use deleteEntity()
-     * @param entity 
-     */
-    public removeEntity(entity: Entity): void {
-        this._groupsRegistry.removeEntity(entity);
-    }
-
-    /**
-     * @deprecated Use entity.removeComps() and new components
-     * @param entity 
-     * @param componentInits 
-     */
-    public removeComponentsFromEntity(entity: Entity, components: ComponentConstructor[] | ComponentConstructor): void {
-        if (!(components instanceof Array)) {
-            this._groupsRegistry.removeComponentFromEntity(entity, components);
-        } else {
-            components.forEach(comp => this._groupsRegistry.removeComponentFromEntity(entity, comp))
-        }
-    }
-
-    /**
-     * @deprecated Use entity.addComps() and new components
-     * @param entity 
-     * @param componentInits 
-     */
-    public addComponentsToEntity(entity: Entity, componentInits: ComponentInitializator[]): void {
-        entity.components.push(...componentInits);
-        for (const componentInit of componentInits) {
-            const compInstance = this._getComponentInstance(componentInit.component);
-            compInstance.reset(entity as any, ...(componentInit.args ?? []));
-
-        }
-        this._groupsRegistry.pushEntity(entity, componentInits);
-    }
-
-
-    /**
-     * @deprecated Use registerSys() and new system class (Sys)
-     * @param system 
-     * @returns 
-     */
-    public registerSystem<T extends System = System>(system: T): T {
-        system.ecs = this;
-        this._systemsRegistry.legacyRegister(system, this._groupsRegistry);
-        return system;
-    }
-
-    /**
-     * @deprecated Use newEntity()
-     * @param components
-     * @returns
-     */
-    public createEntity<T extends Component[]>(components: ComponentInitializator<T[number]>[]): Entity {
-        const entity = new Entity([]);
-        entity.id = this._currentID++;
-        this.addComponentsToEntity(entity, components);
-        return entity;
-    }
-
-
-    /** @deprecated */
-    private _getComponentInstance<T extends Component>(component: ComponentConstructor<T>): T {
-        if (!this._components[component.id]) {
-            this._components[component.id] = new component();
-        }
-        return this._components[component.id] as T;
-    }
-
-    /** @deprecated */
-    public createArchetype(components: ComponentInitializator[]): Archetype {
-        return components;
-    }
-
-    public update<T extends object>(time?: T): void {
-        for (const system of this._systemsRegistry.systems) {
-            system.update(time as T);
-        }
-
-        // New
-
+    public update(): void {
         for (const sys of this.sysRegistry.sys) {
             sys.update();
         }
@@ -132,15 +32,11 @@ export class ECS {
         this._deleteFlaggedEntities();
     }
 
-    // New
-
-    private readonly sysRegistry = new SystemRegistry();
-    private readonly resRegistry = new ResourceRegistry();
+    private readonly sysRegistry = new SysRegistry();
+    private readonly resRegistry = new ResRegistry();
     private readonly compIndex = new ComponentIndex();
 
     private readonly entitiesToDelete: Set<Entity> = new Set();
-
-    private readonly resources = new ResourcesOld();
 
 
     /**
@@ -220,40 +116,3 @@ export class ECS {
         this.entitiesToDelete.clear()
     }
 }
-
-
-/** @deprecated */
-type NonFunctionPropertyNames<T> = { [K in keyof T]: T[K] extends Function ? never : K }[keyof T];
-/** @deprecated */
-type NonFunctionProperties<T> = Pick<T, NonFunctionPropertyNames<T>>;
-/** @deprecated */
-type ComponentOf<T extends ComponentInitializator> = NonFunctionProperties<InstanceType<T['component']>>;
-
-/** @deprecated */
-type createEntityFunc = <T extends ComponentInitializator,
-    T2 extends ComponentInitializator,
-    T3 extends ComponentInitializator,
-    T4 extends ComponentInitializator,
-    T5 extends ComponentInitializator,
-    T6 extends ComponentInitializator,
-    T7 extends ComponentInitializator,
-    T8 extends ComponentInitializator,
-    T9 extends ComponentInitializator,
-    T10 extends ComponentInitializator>(comps: ComponentsInitList<T, T2, T3, T4, T5, T6, T7, T8, T9, T10>)
-    => ComponentOf<T> & ComponentOf<T2> & ComponentOf<T3> & ComponentOf<T4> & ComponentOf<T5> & ComponentOf<T6>
-    & ComponentOf<T7> & ComponentOf<T8> & ComponentOf<T9> & ComponentOf<T10> & Entity;
-
-/** @deprecated */
-type ComponentsInitList<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> =
-    Partial<[T1, T2, T3, T4, T5, T6, T7, T8, T9, T10]> | { length: any } & {
-        '0'?: T1;
-        '1'?: T2;
-        '2'?: T3;
-        '3'?: T4;
-        '4'?: T5;
-        '5'?: T6;
-        '6'?: T7;
-        '7'?: T8;
-        '8'?: T9;
-        '9'?: T10;
-    }

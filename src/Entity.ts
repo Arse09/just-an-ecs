@@ -4,42 +4,22 @@
  * @license MIT (LICENSE.md)
  */
 
-import { Component, type ComponentClass, type ComponentInitializator, type ComponentInitializer, type ComponentInitializersOf } from "./Component";
+import { Component, type ComponentClass, type ComponentInitializer, type ComponentInitializersOf } from "./Component";
 import { ComponentIndex } from "./ComponentIndex";
 import { type Prettify } from "./types";
 
 export class Entity {
     public id!: number;
-    /** @deprecated */
-    public components: ComponentInitializator[];
 
-    /**
-     * @deprecated Use EntityFactory class to create entities
-     * @param components 
-     */
-    constructor(components: ComponentInitializator[]);
-    constructor(id: number, compMap: Map<ComponentClass<any>, Component<any>>, compIndex: ComponentIndex);
+    constructor(id: number, compMap: Map<ComponentClass<any>, Component<any>>, compIndex: ComponentIndex) {
+        this.id = id;
+        this.compMap = compMap;
+        this.compIndex = compIndex;
 
-    constructor(componentsOrId: number | ComponentInitializator[], compMap?: Map<ComponentClass<any>, Component<any>>, compIndex?: ComponentIndex) {
-        if (typeof componentsOrId === "number" && compMap instanceof Map && compIndex instanceof ComponentIndex) {
-            this.id = componentsOrId;
-            this.compMap = compMap;
-            this.compIndex = compIndex;
-            this.components = [];
-
-            for (const CompClass of this.compMap.keys()) {
-                this.compIndex.registerComponent(this, CompClass);
-            }
-        } else if (typeof componentsOrId !== "number" && compMap === undefined && compIndex === undefined) {
-            this.components = componentsOrId;
-            this.compIndex = new ComponentIndex;
-            this.compMap = new Map();
-        } else {
-            throw new Error("Invalid Entity constructor arguments")
+        for (const CompClass of this.compMap.keys()) {
+            this.compIndex.registerComponent(this, CompClass);
         }
     }
-
-    // New
 
     private readonly compMap: Map<ComponentClass<any>, Component<any>>;
     private readonly compIndex: ComponentIndex;
@@ -95,9 +75,6 @@ export class Entity {
         }
     }
 }
-
-
-// New
 
 export class EntityFactory {
     private static nextEntityId = 0;

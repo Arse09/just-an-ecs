@@ -1,13 +1,13 @@
 /**
- * @author Arse09
+ * @original MIT code fireveined
+ * @contributor Arse09
  * @license MIT (LICENSE.md)
  */
 
 import { ECS } from "./ECS";
 import { Entity } from "./Entity";
 import { Query } from "./Query";
-import { ResourcesOld } from "./Resource";
-import type { ResQuery } from "./ResourceRegistry";
+import type { ResQuery } from "./ResQuery";
 
 export interface SysInstance {
     readonly ecs: ECS;
@@ -30,5 +30,17 @@ export abstract class Sys {
 
     constructor(ecs: ECS) {
         this.ecs = ecs;
+    }
+}
+
+export class SysRegistry {
+    private readonly _systems: Set<SysInstance> = new Set();
+
+    get sys(): Set<SysInstance> {
+        return this._systems;
+    }
+
+    public register(system: SysInstance) {
+        this._systems.add(system)
     }
 }
