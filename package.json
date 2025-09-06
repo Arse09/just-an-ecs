@@ -1,6 +1,6 @@
 {
   "name": "@arse09/just-an-ecs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A really basic ecs for the browser.",
   "type": "module",
   "main": "dist/index.js",
@@ -25,8 +25,5 @@
   "devDependencies": {
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
-  },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
   }
 }
