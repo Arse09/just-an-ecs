@@ -134,5 +134,4 @@ requestAnimationFrame(gameLoop);
 
 ## License
 
-This project contains code originally authored by fireveined (see OLDLICENSE.md)
-All modifications and new code by Arse09 are licensed under the MIT License.
+This project is licensed under the MIT License - see the LICENSE.md file for details

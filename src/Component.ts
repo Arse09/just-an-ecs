@@ -1,5 +1,5 @@
 /**
- * @original MIT code fireveined (OLDLICENSE.md)
+ * @original MIT code fireveined
  * @contributor Arse09
  * @license MIT (LICENSE.md)
  */
