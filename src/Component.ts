@@ -60,11 +60,11 @@ export interface ComponentInitializator<T extends Component = Component> {
         public vy = this.args.vy;
     }
  */
-export function makeComponent<T extends ComponentConstructor>(constructor: T) {
+export function makeComponent<const T extends ComponentConstructor>(constructor: T) {
     constructor.id = (Component as any)._idCounter++;
 }
 
-export abstract class Component<ArgsT extends object | void = void> {
+export abstract class Component<const ArgsT extends object | void = void> {
     /** @deprecated */
     private static _idCounter = 0;
     static nextId = 0;
@@ -84,13 +84,6 @@ export abstract class Component<ArgsT extends object | void = void> {
 
 
 // New
-export type ComponentInitializer<T extends Component<any> = Component<any>> =
-    T extends Component<infer ArgsT>
-    ? ArgsT extends void
-    ? { class: new () => T }
-    : { class: new (args: ArgsT) => T; args: ArgsT }
-    : never;
-
 
 export type ComponentInstance<T extends ComponentInitializer = ComponentInitializer> =
     T extends { class: new (args: infer ArgsT) => infer C }
@@ -104,6 +97,13 @@ export type ComponentClass<T extends Component<any> = Component<any>> =
     ? ArgsT extends void
     ? new () => T
     : new (args: ArgsT) => T
+    : never;
+
+export type ComponentInitializer<T extends Component<any> = Component<any>> =
+    T extends Component<infer ArgsT>
+    ? ArgsT extends void
+    ? { class: new () => T }
+    : { class: new (args: ArgsT) => T; args: ArgsT }
     : never;
 
 export type ComponentInitializersOf<T extends readonly Component<any>[]> = {

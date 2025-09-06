@@ -4,16 +4,28 @@
  * @license MIT (LICENSE.md)
  */
 
-import { Component, type ComponentClass, type ComponentConstructor, type ComponentInitializator, type ComponentInitializer, type ComponentInitializersOf } from "./Component";
 import { Entity, EntityFactory } from "./Entity";
-import { type Archetype } from "./Archetype";
+
+import { ComponentIndex } from "./ComponentIndex";
+import {
+    Component,
+    type ComponentClass,
+    type ComponentConstructor,
+    type ComponentInitializator,
+    type ComponentInitializer,
+    type ComponentInitializersOf
+} from "./Component";
+
+import { ResourceRegistry, ResQuery } from "./ResourceRegistry";
+import { Resource, ResourcesOld, type ResClass, type ResInitializersOf } from "./Resource";
+
+import { Query } from "./Query";
 import { SystemRegistry } from "./SystemRegistry";
+import { type SysConstructor } from "./Sys";
+
+import { type Archetype } from "./Archetype";
 import { ComponentGroupRegistry } from "./ComponentGroupRegistry";
 import { System } from "./System";
-import { type SysConstructor } from "./Sys";
-import { Query } from "./Query";
-import { ComponentIndex } from "./ComponentIndex";
-import { Resources } from "./Resources";
 
 export class ECS {
     /** @deprecated */
@@ -106,14 +118,12 @@ export class ECS {
         return components;
     }
 
-    public update<T extends object>(time: T): void {
+    public update<T extends object>(time?: T): void {
         for (const system of this._systemsRegistry.systems) {
-            system.update(time);
+            system.update(time as T);
         }
 
         // New
-
-        this.resources.ticker.update()
 
         for (const sys of this.sysRegistry.sys) {
             sys.update();
@@ -125,11 +135,12 @@ export class ECS {
     // New
 
     private readonly sysRegistry = new SystemRegistry();
+    private readonly resRegistry = new ResourceRegistry();
     private readonly compIndex = new ComponentIndex();
 
     private readonly entitiesToDelete: Set<Entity> = new Set();
 
-    private readonly resources = new Resources();
+    private readonly resources = new ResourcesOld();
 
 
     /**
@@ -158,8 +169,7 @@ export class ECS {
 
     /**
      * Registers systems to the ECS.
-     * @param system A system (Sys)
-     * @param systems Extra systems
+     * @param systems 
      */
     public registerSys<const Ss extends SysConstructor[]>(
         ...systems: Ss
@@ -170,22 +180,36 @@ export class ECS {
         }
     }
 
-
     /**
      * Queries all the entities that have the specified components
      * @param comps Requiered components
-     * @returns An iterable query
+     * @returns An iterable Query
      */
     public query<const T extends readonly ComponentClass<any>[]>(...comps: [...T]): Query<T> {
         return new Query(this.compIndex, [...comps]);
     }
 
+
     /**
-     * @experimental
-     * @returns 
+     * Registers resources to the ECS.
+     * @param resInits
      */
-    public queryRes(): Resources {
-        return this.resources; // TODO: Resources
+    public registerRes<const T extends readonly Resource<any>[]>(
+        ...resInits: [...ResInitializersOf<T>]
+    ) {
+        for (const init of resInits) {
+            const instance = 'args' in init ? new init.class(init.args) : new init.class();
+            (this.resRegistry.register(init.class, instance));
+        }
+    }
+
+    /**
+     * Queries all the specified resources
+     * @param resources 
+     * @returns A ResQuery
+     */
+    public queryRes<const T extends readonly ResClass<any>[]>(...resources: [...T]): ResQuery<T> {
+        return new ResQuery(this.resRegistry, resources);
     }
 
 
@@ -195,7 +219,6 @@ export class ECS {
         }
         this.entitiesToDelete.clear()
     }
-
 }
 
 

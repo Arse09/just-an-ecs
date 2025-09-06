@@ -14,7 +14,7 @@ export class ComponentGroupRegistry {
 
     public get(components: ComponentConstructor[], hash?: ComponentsHash): ComponentsGroup {
         const rHash = hash ?? getComponentsHash(components);
-        
+
 
         if (!this.componentsGroups[rHash]) {
             this.componentsGroups[rHash] = new ComponentsGroup(components);

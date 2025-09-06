@@ -110,10 +110,6 @@ export class EntityFactory {
     ): Entity {
         const entityId = this.nextEntityId++;
 
-        const instances = compInits.map(init =>
-            'args' in init ? new init.class(init.args) : new init.class()
-        );
-
         const compMap = new Map<ComponentClass<any>, Component<any>>();
         for (const compInit of compInits) {
             const instance = 'args' in compInit ? new compInit.class(compInit.args) : new compInit.class();
