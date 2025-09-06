@@ -9,7 +9,7 @@ They store state but do not contain behavior.
 
 ``` typescript
 
-import { Component, createComponent } from "just-an-ecs";
+import { Component, createComponent } from "@arse09/just-an-ecs";
 
 @createComponent
 export class TestPositionC extends Component<{ x: number; y: number }> {
@@ -36,7 +36,7 @@ Unlike components, which are per-entity, resources exist only once and are ideal
 
 ``` typescript
 
-import { Resource, createResource } from "just-an-ecs";
+import { Resource, createResource } from "@arse09/just-an-ecs";
 
 @createResource
 export class TestTickR extends Resource<{ elapsedSec: number; deltaSec: number; lastSec: number }> {
@@ -54,7 +54,7 @@ They query entities and resources, then update or process data each frame. Syste
 
 ``` typescript
 
-import { Sys, type SysInstance } from "just-an-ecs";
+import { Sys, type SysInstance } from "@arse09/just-an-ecs";
 
 export class TestTickUpdaterS extends Sys implements SysInstance {
     readonly res = this.ecs.queryRes(TestTickR);
@@ -103,7 +103,7 @@ It manages entities, components, resources, and systems, and handles updating sy
 
 ``` typescript
 
-import { ECS } from "just-an-ecs";
+import { ECS } from "@arse09/just-an-ecs";
 
 const ecs = new ECS();
 
