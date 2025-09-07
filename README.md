@@ -72,8 +72,6 @@ export class TestTickUpdaterS extends Sys implements SysInstance {
         tick.deltaSec = nowSec - tick.lastSec;
         tick.elapsedSec += tick.deltaSec;
         tick.lastSec = nowSec;
-
-        console.log("tick", tick);
     }
 }
 
@@ -91,9 +89,6 @@ export class TestMovementS extends Sys implements SysInstance {
 
             pos.x += vel.vx * tick.deltaSec;
             pos.y += vel.vy * tick.deltaSec;
-
-            console.log("Pos", pos);
-
         }
     }
 }

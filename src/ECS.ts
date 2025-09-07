@@ -18,7 +18,7 @@ import { ResRegistry, ResQuery } from "./ResQuery";
 import { Resource, type ResClass, type ResInitializersOf } from "./Resource";
 
 import { Query } from "./Query";
-import { SysRegistry, type SysConstructor } from "./Sys";
+import { Sys, SysRegistry, type SysConstructor, type SysInstance } from "./Sys";
 
 
 export class ECS {
@@ -56,7 +56,7 @@ export class ECS {
     public newEntity<const T extends readonly Component<any>[]>(
         ...compInits: ComponentInitializersOf<T>
     ): Entity {
-        const initializers: ComponentInitializer[] = compInits.map(init =>
+        const initializers: ComponentInitializer<Component<any>>[] = compInits.map(init =>
             'args' in init ? { class: init.class, args: init.args } : { class: init.class }
         );
 
@@ -76,7 +76,7 @@ export class ECS {
      * Registers systems to the ECS.
      * @param systems 
      */
-    public registerSys<const Ss extends SysConstructor[]>(
+    public registerSys<const Ss extends SysConstructor<SysInstance>[]>(
         ...systems: Ss
     ) {
         for (const SysClass of systems) {
@@ -90,7 +90,7 @@ export class ECS {
      * @param comps Requiered components
      * @returns An iterable Query
      */
-    public query<const T extends readonly ComponentClass<any>[]>(...comps: [...T]): Query<T> {
+    public query<const T extends readonly ComponentClass<Component<any>>[]>(...comps: [...T]): Query<T> {
         return new Query(this.compIndex, [...comps]);
     }
 
@@ -103,7 +103,7 @@ export class ECS {
         ...resInits: [...ResInitializersOf<T>]
     ) {
         for (const init of resInits) {
-            const instance = 'args' in init ? new init.class(init.args) : new init.class();
+            const instance = new init.class(init.args);
             (this.resRegistry.register(init.class, instance));
         }
     }
@@ -113,7 +113,7 @@ export class ECS {
      * @param resources 
      * @returns A ResQuery
      */
-    public queryRes<const T extends readonly ResClass<any>[]>(...resources: [...T]): ResQuery<T> {
+    public queryRes<const T extends readonly ResClass<Resource<any>>[]>(...resources: [...T]): ResQuery<T> {
         return new ResQuery(this.resRegistry, resources);
     }
 

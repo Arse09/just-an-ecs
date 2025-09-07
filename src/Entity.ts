@@ -9,9 +9,9 @@ import { ComponentIndex } from "./ComponentIndex";
 import { type Prettify } from "./types";
 
 export class Entity {
-    public id!: number;
+    public id: number;
 
-    constructor(id: number, compMap: Map<ComponentClass<any>, Component<any>>, compIndex: ComponentIndex) {
+    constructor(id: number, compMap: Map<ComponentClass<Component<any>>, Component<any>>, compIndex: ComponentIndex) {
         this.id = id;
         this.compMap = compMap;
         this.compIndex = compIndex;
@@ -64,7 +64,7 @@ export class Entity {
         }
     }
 
-    removeComps<const T extends readonly ComponentClass<any>[]>(
+    removeComps<const T extends readonly ComponentClass<Component<any>>[]>(
         ...compClasses: [...T]
     ) {
         for (let i = 0; i < compClasses.length; i++) {
@@ -81,13 +81,13 @@ export class EntityFactory {
 
     private constructor() { }
 
-    static create<InitsT extends ComponentInitializer[]>(
+    static create<InitsT extends ComponentInitializer<Component<any>>[]>(
         compInits: [...InitsT],
         compIndex: ComponentIndex
     ): Entity {
         const entityId = this.nextEntityId++;
 
-        const compMap = new Map<ComponentClass<any>, Component<any>>();
+        const compMap = new Map<ComponentClass<Component<any>>, Component<any>>();
         for (const compInit of compInits) {
             const instance = 'args' in compInit ? new compInit.class(compInit.args) : new compInit.class();
 

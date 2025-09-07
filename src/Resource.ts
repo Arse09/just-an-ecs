@@ -3,89 +3,41 @@
  * @license MIT (LICENSE.md)
  */
 
-export class Ticker {
-    private _delta = 0;
-    private _elapsed = 0;
+export type ResConstructor<T extends Resource<any>> =
+    T extends Resource<infer U>
+    ? { new(args: U): T; }
+    : { new(...args: any[]): T; };
 
-    private startTime: number;
-    private lastTime: number;
-
-    constructor(startTime: number = performance.now()) {
-        this.startTime = startTime;
-        this.lastTime = startTime;
-    }
-
-    update(currentTime: number = performance.now()) {
-        this._delta = (currentTime - this.lastTime) / 1000;
-        this._elapsed = (currentTime - this.startTime) / 1000;
-        this.lastTime = currentTime;
-    }
-
-    /**
-     * @unit seconds
-     */
-    get delta() {
-        return this._delta;
-    }
-
-    /**
-     * @unit seconds
-     */
-    get elapsed() {
-        return this._elapsed;
-    }
-}
-
-export class ResourcesOld {
-    [K: string]: any;
-    public readonly ticker: Ticker = new Ticker();
-}
-
-// New
-
-export type ResConstructor<T extends Resource<any> = Resource<any>> =
-    T extends Resource<infer ArgsT>
-    ? undefined extends ArgsT
-    ? { new(args?: ArgsT): T; id: number }
-    : { new(args: ArgsT): T; id: number }
-    : { new(...args: any[]): T; id: number };
-
-export type ResClass<T extends Resource<any> = Resource<any>> =
-    T extends Resource<infer ArgsT>
-    ? ArgsT extends void
-    ? new () => T
-    : new (args: ArgsT) => T
+export type ResClass<T extends Resource<any>> =
+    T extends Resource<infer U>
+    ? new (args: U) => T
     : never;
 
-export type ResInitializer<T extends Resource<any> = Resource<any>> =
-    T extends Resource<infer ArgsT>
-    ? ArgsT extends void
-    ? { class: new () => T }
-    : { class: new (args: ArgsT) => T; args: ArgsT }
+export type ResInitializer<T extends Resource<any>> =
+    T extends Resource<infer U>
+    ? { class: new (args: U) => T; args: U }
     : never;
 
 export type ResInitializersOf<T extends readonly Resource<any>[]> = {
     [K in keyof T]: ResInitializer<T[K]>
 };
 
-export type ResInstanceOfClass<C extends ResClass = ResClass> =
+export type ResInstanceOfClass<C extends new (args: any) => any> =
     C extends new (args: any) => infer I ? I : never;
 
+// Resource decorator (unchanged)
+export function createResource<const ResT extends ResConstructor<Resource<any>>>(target: ResT) { }
 
-// Resource decorator
-export function createResource<const ResT extends ResConstructor>(target: ResT) {
-    const id = Resource.nextId;
-    target.id = id;
-}
-
-export abstract class Resource<ArgsT extends object | void = void> {
+// Updated Resource class: ArgsT must be an object, no default/void
+export abstract class Resource<ArgsT extends object> {
     private static _nextId = 0;
     public static get nextId() { return this._nextId++; }
 
-    protected args: ArgsT;
-    static id: number;
+    protected readonly args: ArgsT;
+    protected readonly id: number;
 
-    constructor(args?: ArgsT) {
-        this.args = args as ArgsT;
+    constructor(args: ArgsT) {
+        this.args = args;
+        this.id = Resource.nextId;
     }
 }
