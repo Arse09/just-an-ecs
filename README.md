@@ -1,5 +1,23 @@
 # just-an-ecs [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php) [![TypeScript](https://badges.frapsoft.com/typescript/code/typescript.svg?v=101)](https://github.com/ellerbrock/typescript-badges/)
 
+⚠️ **Note:** This project is still in active development.  
+
+- I will try **not to introduce breaking changes**, but please be aware that the API may evolve.  
+- I apologize for initially starting at **version 1.x** instead of 0.x - this was premature, and I appreciate your understanding.  
+
+Feel free to contribute, report issues, or suggest improvements!
+
+---
+
+- Github repo: <https://github.com/Arse09/just-an-ecs>
+- Npm package: <https://www.npmjs.com/package/@arse09/just-an-ecs>
+
+## Install
+
+``` bash
+npm i @arse09/just-an-ecs
+```
+
 ## Getting started
 
 ### Components

@@ -51,7 +51,11 @@ export class Entity {
         return comp as unknown as Prettify<Omit<T, "reset">>;
     }
 
-    // Components API
+    has<T extends Component<any>>(CompClass: ComponentClass<T>): boolean {
+        return this.compMap.has(CompClass);
+    }
+
+    
     addComps<const T extends readonly Component<any>[]>(
         ...compInits: ComponentInitializersOf<T>
     ) {
