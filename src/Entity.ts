@@ -6,7 +6,6 @@
 
 import { Component, type ComponentClass, type ComponentInitializer, type ComponentInitializersOf } from "./Component";
 import { ComponentIndex } from "./ComponentIndex";
-import { type Prettify } from "./types";
 
 export class Entity {
     public id: number;
@@ -24,31 +23,31 @@ export class Entity {
     private readonly compMap: Map<ComponentClass<any>, Component<any>>;
     private readonly compIndex: ComponentIndex;
 
-    read<T extends Component<any>>(CompClass: ComponentClass<T>, fail: true): Readonly<Omit<T, "reset">>;
-    read<T extends Component<any>>(CompClass: ComponentClass<T>, fail?: false): Readonly<Omit<T, "reset">> | undefined;
-    read<T extends Component<any>>(CompClass: ComponentClass<T>, fail = false): Readonly<Omit<T, "reset">> | undefined {
+    read<T extends Component<any>>(CompClass: ComponentClass<T>, fail: true): Readonly<T>;
+    read<T extends Component<any>>(CompClass: ComponentClass<T>, fail?: false): Readonly<T> | undefined;
+    read<T extends Component<any>>(CompClass: ComponentClass<T>, fail = false): Readonly<T> | undefined {
         const comp = this.compMap.get(CompClass);
         if (!comp) {
             if (fail) throw new Error("Component not found");
             return undefined;
         }
-        return Object.freeze({ ...comp }) as unknown as Readonly<Omit<T, "reset">>;
+        return Object.freeze({ ...comp }) as unknown as Readonly<T>;
     }
 
 
-    write<T extends Component<any>>(CompClass: ComponentClass<T>, fail: true): Prettify<Omit<T, "reset">>;
-    write<T extends Component<any>>(CompClass: ComponentClass<T>, fail?: false): Prettify<Omit<T, "reset">> | undefined;
+    write<T extends Component<any>>(CompClass: ComponentClass<T>, fail: true): T;
+    write<T extends Component<any>>(CompClass: ComponentClass<T>, fail?: false): T | undefined;
 
     write<T extends Component<any>>(
         CompClass: ComponentClass<T>,
         fail: boolean = false
-    ): Prettify<Omit<T, "reset">> | undefined {
+    ): T | undefined {
         const comp = this.compMap.get(CompClass);
         if (!comp) {
             if (fail) throw new Error(`Component not found in entity`);
             return undefined;
         }
-        return comp as unknown as Prettify<Omit<T, "reset">>;
+        return comp as unknown as T;
     }
 
     has<T extends Component<any>>(CompClass: ComponentClass<T>): boolean {
