@@ -5,28 +5,26 @@
  */
 
 import { ECS } from "./ECS";
-import { Entity } from "./Entity";
 import { Query } from "./Query";
 import type { ResQuery } from "./ResQuery";
 
 export interface SysInstance {
     readonly ecs: ECS;
-    readonly [query: `query${string}`]: Query<any>;
-    readonly [res: `res${string}`]: ResQuery<any>;
+    readonly query?: Query<any>;
+    readonly res?: ResQuery<any>;
 
     // TODO: onEntityAdded?(entity: Entity): void;
     // TODO: onEntityRemoved?(entity: Entity): void;
 
     setup?(): void;
     update(): void;
+    cleanup?(): void;
 }
 
-export type SysConstructor<T extends SysInstance = SysInstance> = new (...args: any[]) => T;
+export type SysConstructor<T extends SysInstance> = new (...args: any[]) => T;
 
 export abstract class Sys {
     readonly ecs: ECS;
-    readonly [query: `query${string}`]: Query<any>;
-    readonly [res: `res${string}`]: ResQuery<any>;
 
     constructor(ecs: ECS) {
         this.ecs = ecs;
@@ -34,13 +32,20 @@ export abstract class Sys {
 }
 
 export class SysRegistry {
-    private readonly _systems: Set<SysInstance> = new Set();
+    readonly #systems: Map<SysConstructor<SysInstance>, SysInstance> = new Map();
 
-    get sys(): Set<SysInstance> {
-        return this._systems;
+    get systems(): Map<SysConstructor<SysInstance>, SysInstance> {
+        return this.#systems;
     }
 
-    public register(system: SysInstance) {
-        this._systems.add(system)
+    public register<const SysInstanceT extends SysInstance>(sysClass: SysConstructor<SysInstanceT>, sysInstance: SysInstanceT) {
+        this.#systems.set(sysClass, sysInstance)
+    }
+
+    public unregister<const SysInstanceT extends SysInstance>(sysClass: SysConstructor<SysInstanceT>): SysInstanceT | null {
+        const sysInstance = this.#systems.get(sysClass);
+        if (!sysInstance) return null;
+        this.#systems.delete(sysClass);
+        return sysInstance as SysInstanceT;
     }
 }
