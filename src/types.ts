@@ -3,4 +3,5 @@
  * @license MIT (LICENSE.md)
  */
 
-export type Prettify<T> = { [K in keyof T]: T[K] } & {};
+export type Prettify<T> = T extends infer O ? { [K in keyof O]: O[K] } : never;
+export type PrettifyUnion<T> = T extends unknown ? { [K in keyof T]: T[K] } : never;
