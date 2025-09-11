@@ -1,6 +1,6 @@
 {
   "name": "@arse09/just-an-ecs",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "A really basic ecs for the browser.",
   "type": "module",
   "main": "dist/index.js",
