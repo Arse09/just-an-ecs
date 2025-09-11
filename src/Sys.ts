@@ -10,8 +10,10 @@ import type { ResQuery } from "./ResQuery";
 
 export interface SysInstance {
     readonly ecs: ECS;
-    readonly query?: Query<any>;
-    readonly res?: ResQuery<any>;
+    /* 
+    // readonly query?: Query<any>;
+    // readonly res?: ResQuery<any>; 
+    */
 
     // TODO: onEntityAdded?(entity: Entity): void;
     // TODO: onEntityRemoved?(entity: Entity): void;
@@ -25,6 +27,11 @@ export type SysConstructor<T extends SysInstance> = new (...args: any[]) => T;
 
 export abstract class Sys {
     readonly ecs: ECS;
+
+    /* 
+    // readonly query?: Query<any>;
+    // readonly res?: ResQuery<any>; 
+    */
 
     constructor(ecs: ECS) {
         this.ecs = ecs;
