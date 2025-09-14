@@ -15,6 +15,7 @@
   "scripts": {
     "build": "tsc ",
     "dev": "tsc --watch",
+    "test": "vitest run tests/*.test.ts",
     "prepublishOnly": "pnpm build"
   },
   "license": "MIT",
@@ -24,6 +25,7 @@
   ],
   "devDependencies": {
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
   }
 }

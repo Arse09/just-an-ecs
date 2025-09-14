@@ -5,14 +5,12 @@
  */
 
 import { ECS } from "./ECS";
-import { Query } from "./Query";
-import type { ResQuery } from "./ResQuery";
 
 export interface SysInstance {
     readonly ecs: ECS;
     /* 
     // readonly query?: Query<any>;
-    // readonly res?: ResQuery<any>; 
+    // readonly res?: ResQuery<any>;
     */
 
     // TODO: onEntityAdded?(entity: Entity): void;
@@ -30,7 +28,7 @@ export abstract class Sys {
 
     /* 
     // readonly query?: Query<any>;
-    // readonly res?: ResQuery<any>; 
+    // readonly res?: ResQuery<any>;
     */
 
     constructor(ecs: ECS) {
