@@ -67,6 +67,8 @@ export class TestTickR extends Resource<{ elapsedSec: number; deltaSec: number; 
 
 ### Systems
 
+⚠️ **Note:** Outdated after 1.2.1. These still work but are deprecated
+
 Systems contain *the logic* of your game.
 They query entities and resources, then update or process data each frame. Systems are executed in the order they are registered in the ECS.
 
