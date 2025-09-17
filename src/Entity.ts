@@ -4,41 +4,41 @@
  * @license MIT (LICENSE.md)
  */
 
-import { Component, type ComponentClass, type ComponentInitializer, type ComponentInitializersOf } from "./Component";
+import { type AnyComponent, type AnyComponentClass, type ComponentClass, type PrivateComponentInitializer, type PrivateComponentInitializers } from "./Component";
 import { ComponentIndex } from "./ComponentIndex";
 
 export class Entity {
     public id: number;
 
-    constructor(id: number, compMap: Map<ComponentClass<Component<any>>, Component<any>>, compIndex: ComponentIndex) {
+    constructor(id: number, compMap: Map<AnyComponentClass, AnyComponent>, compIndex: ComponentIndex) {
         this.id = id;
-        this.compMap = compMap;
         this.compIndex = compIndex;
+        this.compMap = compMap;
 
         for (const CompClass of this.compMap.keys()) {
             this.compIndex.registerComponent(this, CompClass);
         }
     }
 
-    private readonly compMap: Map<ComponentClass<any>, Component<any>>;
+    private readonly compMap: Map<AnyComponentClass, AnyComponent>;
     private readonly compIndex: ComponentIndex;
 
-    read<T extends Component<any>>(CompClass: ComponentClass<T>, fail: true): Readonly<T>;
-    read<T extends Component<any>>(CompClass: ComponentClass<T>, fail?: false): Readonly<T> | undefined;
-    read<T extends Component<any>>(CompClass: ComponentClass<T>, fail = false): Readonly<T> | undefined {
+    read<T extends AnyComponent>(CompClass: ComponentClass<T>, fail: true): Readonly<T>;
+    read<T extends AnyComponent>(CompClass: ComponentClass<T>, fail?: false): Readonly<T> | undefined;
+    read<T extends AnyComponent>(CompClass: ComponentClass<T>, fail = false): Readonly<T> | undefined {
         const comp = this.compMap.get(CompClass);
         if (!comp) {
             if (fail) throw new Error("Component not found");
             return undefined;
         }
-        return Object.freeze({ ...comp }) as unknown as Readonly<T>;
+        return comp as unknown as Readonly<T>;
     }
 
 
-    write<T extends Component<any>>(CompClass: ComponentClass<T>, fail: true): T;
-    write<T extends Component<any>>(CompClass: ComponentClass<T>, fail?: false): T | undefined;
+    write<T extends AnyComponent>(CompClass: ComponentClass<T>, fail: true): T;
+    write<T extends AnyComponent>(CompClass: ComponentClass<T>, fail?: false): T | undefined;
 
-    write<T extends Component<any>>(
+    write<T extends AnyComponent>(
         CompClass: ComponentClass<T>,
         fail: boolean = false
     ): T | undefined {
@@ -50,16 +50,16 @@ export class Entity {
         return comp as unknown as T;
     }
 
-    has<T extends Component<any>>(CompClass: ComponentClass<T>): boolean {
+    has<T extends AnyComponent>(CompClass: ComponentClass<T>): boolean {
         return this.compMap.has(CompClass);
     }
 
-    
-    addComps<const T extends readonly Component<any>[]>(
-        ...compInits: ComponentInitializersOf<T>
+
+    addComps<const T extends readonly AnyComponent[]>(
+        ...compInits: PrivateComponentInitializers<T>
     ) {
         for (const compInit of compInits) {
-            const instance = 'args' in compInit ? new compInit.class(compInit.args) : new compInit.class();
+            const instance = new compInit.class(compInit.args);
 
             this.compMap.set(compInit.class, instance);
 
@@ -67,7 +67,7 @@ export class Entity {
         }
     }
 
-    removeComps<const T extends readonly ComponentClass<Component<any>>[]>(
+    removeComps<const T extends readonly AnyComponentClass[]>(
         ...compClasses: [...T]
     ) {
         for (let i = 0; i < compClasses.length; i++) {
@@ -84,15 +84,15 @@ export class EntityFactory {
 
     private constructor() { }
 
-    static create<InitsT extends ComponentInitializer<Component<any>>[]>(
+    static create<InitsT extends PrivateComponentInitializer<AnyComponent>[]>(
         compInits: [...InitsT],
         compIndex: ComponentIndex
     ): Entity {
         const entityId = this.nextEntityId++;
 
-        const compMap = new Map<ComponentClass<Component<any>>, Component<any>>();
+        const compMap = new Map<ComponentClass<AnyComponent>, AnyComponent>();
         for (const compInit of compInits) {
-            const instance = 'args' in compInit ? new compInit.class(compInit.args) : new compInit.class();
+            const instance = new compInit.class(compInit.args);
 
             compMap.set(compInit.class, instance);
         }

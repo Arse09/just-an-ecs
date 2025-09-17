@@ -4,12 +4,12 @@
  */
 
 import { Entity } from "./Entity";
-import { type ComponentClass } from "./Component";
+import { type AnyComponentClass } from "./Component";
 
 export class ComponentIndex {
-    private readonly index = new Map<ComponentClass<any>, Set<Entity>>();
+    private readonly index = new Map<AnyComponentClass, Set<Entity>>();
 
-    registerComponent(entity: Entity, CompClass: ComponentClass<any>): void {
+    registerComponent(entity: Entity, CompClass: AnyComponentClass): void {
         let set = this.index.get(CompClass);
         if (!set) {
             set = new Set<Entity>();
@@ -18,7 +18,7 @@ export class ComponentIndex {
         set.add(entity);
     }
 
-    unregisterComponent(entity: Entity, CompClass: ComponentClass<any>): void {
+    unregisterComponent(entity: Entity, CompClass: AnyComponentClass): void {
         const set = this.index.get(CompClass);
         if (!set) return;
         set.delete(entity);
@@ -34,7 +34,7 @@ export class ComponentIndex {
         }
     }
 
-    queryAll(componentClasses: readonly ComponentClass<any>[]): Entity[] {
+    queryAll(componentClasses: readonly AnyComponentClass[]): Entity[] {
         if (componentClasses.length === 0) {
             const all = new Set<Entity>();
             for (const s of this.index.values()) {

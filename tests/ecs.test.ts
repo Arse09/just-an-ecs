@@ -40,7 +40,7 @@ describe('ECS example integration', () => {
         }
         createComponent(TestVelocityC);
 
-        class TestEmptyC extends Component<void> { }
+        class TestEmptyC extends Component { }
         createComponent(TestEmptyC);
 
         // Resource

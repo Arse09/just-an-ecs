@@ -51,8 +51,6 @@ export class TestMovementS extends Sys implements SysInstance {
     readonly query = this.ecs.query(TestPositionC, TestVelocityC, TestEmptyC);
     readonly res = this.ecs.queryRes(TestTickR);
 
-    /* readonly qEntities = this.ecs.queryEntities.with(TestPositionC, TestVelocityC).and.without(TestEmptyC); */
-
     update(): void {
         const tick = this.res.read(TestTickR, true);
 

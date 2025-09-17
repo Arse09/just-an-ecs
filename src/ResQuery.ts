@@ -3,9 +3,9 @@
  * @license MIT (LICENSE.md)
  */
 
-import type { ResClass, Resource } from "./Resource";
+import type { ResourceClass, Resource, AnyResource, AnyResourceClass } from "./Resource";
 
-export class ResQuery<const Rs extends readonly ResClass<any>[]> {
+export class ResQuery<const Rs extends readonly ResourceClass<any>[]> {
     private readonly _resources: Rs;
     private readonly resRegistry: ResRegistry;
 
@@ -14,11 +14,11 @@ export class ResQuery<const Rs extends readonly ResClass<any>[]> {
         this._resources = resources;
     }
 
-    read<T extends Resource<any>>(CompClass: ResClass<T>, fail: true): Readonly<T>;
-    read<T extends Resource<any>>(CompClass: ResClass<T>, fail?: false): Readonly<T> | undefined;
+    read<T extends AnyResource>(ResClass: ResourceClass<T>, fail: true): Readonly<T>;
+    read<T extends AnyResource>(ResClass: ResourceClass<T>, fail?: false): Readonly<T> | undefined;
 
-    read<T extends Resource<any>>(CompClass: ResClass<T>, fail: boolean = false): Readonly<T> | undefined {
-        const comp = this.resRegistry.get(CompClass);
+    read<T extends AnyResource>(ResClass: ResourceClass<T>, fail: boolean = false): Readonly<T> | undefined {
+        const comp = this.resRegistry.get(ResClass);
         if (!comp) {
             if (fail) throw new Error("Resource not found");
             return undefined;
@@ -27,11 +27,11 @@ export class ResQuery<const Rs extends readonly ResClass<any>[]> {
     }
 
 
-    write<T extends Resource<any>>(CompClass: ResClass<T>, fail: true): T;
-    write<T extends Resource<any>>(CompClass: ResClass<T>, fail?: false): T | undefined;
+    write<T extends AnyResource>(ResClass: ResourceClass<T>, fail: true): T;
+    write<T extends AnyResource>(ResClass: ResourceClass<T>, fail?: false): T | undefined;
 
-    write<T extends Resource<any>>(CompClass: ResClass<T>, fail: boolean = false): T | undefined {
-        const comp = this.resRegistry.get(CompClass);
+    write<T extends AnyResource>(ResClass: ResourceClass<T>, fail: boolean = false): T | undefined {
+        const comp = this.resRegistry.get(ResClass);
         if (!comp) {
             if (fail) throw new Error(`Resource not found in entity`);
             return undefined;
@@ -41,17 +41,17 @@ export class ResQuery<const Rs extends readonly ResClass<any>[]> {
 }
 
 export class ResRegistry {
-    private readonly _resources = new Map<ResClass<Resource<any>>, Resource<any>>();
+    private readonly _resources = new Map<AnyResourceClass, AnyResource>();
 
     get res() {
         return this._resources;
     }
 
-    public register<ResT extends Resource<any>>(resClass: ResClass<ResT>, resource: ResT) {
-        this._resources.set(resClass, resource);
+    public register<ResT extends AnyResource>(ResourceClass: ResourceClass<ResT>, resource: ResT) {
+        this._resources.set(ResourceClass, resource);
     }
 
-    public get<const ResT extends Resource<any>>(resClass: ResClass<ResT>): ResT {
-        return this._resources.get(resClass) as ResT;
+    public get<const ResT extends AnyResource>(ResourceClass: ResourceClass<ResT>): ResT {
+        return this._resources.get(ResourceClass) as ResT;
     }
 }

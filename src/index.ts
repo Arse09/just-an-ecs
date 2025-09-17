@@ -4,8 +4,11 @@
  * @license MIT (LICENSE.md)
  */
 
+/** @deprecated */
+export { Sys, type SysInstance } from "./Sys";
+
 export { Component, createComponent } from "./Component";
 export { Resource, createResource } from "./Resource"
-export { Sys, type SysInstance } from "./Sys";
+export { System, createSystem } from "./System";
 export { Entity } from "./Entity";
 export { ECS } from "./ECS";

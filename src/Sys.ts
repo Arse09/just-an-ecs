@@ -5,49 +5,68 @@
  */
 
 import { ECS } from "./ECS";
+import type { AnySystemClass, AnySystemInstance, SystemClass, SystemInstance } from "./System";
 
+/** 
+ * @deprecated Dont use this implementation
+ * @example 
+ * - Old system
+ *  export class TestMovementS extends Sys implements SysInstance {
+ *      // ... 
+ *  }
+ * 
+ * - New system (ignore "\")
+ * \@createSystem
+ * export class TestMovementS extends System {
+ *      // ... 
+ *  }
+ */
 export interface SysInstance {
     readonly ecs: ECS;
-    /* 
-    // readonly query?: Query<any>;
-    // readonly res?: ResQuery<any>;
-    */
-
-    // TODO: onEntityAdded?(entity: Entity): void;
-    // TODO: onEntityRemoved?(entity: Entity): void;
 
     setup?(): void;
     update(): void;
     cleanup?(): void;
 }
-
-export type SysConstructor<T extends SysInstance> = new (...args: any[]) => T;
-
+/** 
+ * @deprecated Dont use this implementation
+ * @example 
+ * - Old system
+ *  export class TestMovementS extends Sys implements SysInstance {
+ *      // ... 
+ *  }
+ * 
+ * - New system (ignore "\")
+ * \@createSystem
+ * export class TestMovementS extends System {
+ *      // ... 
+ *  }
+ */
 export abstract class Sys {
     readonly ecs: ECS;
 
-    /* 
-    // readonly query?: Query<any>;
-    // readonly res?: ResQuery<any>;
-    */
+    setup?(): void;
+    update(): void { /* To be overriden */ };
+    cleanup?(): void;
 
     constructor(ecs: ECS) {
         this.ecs = ecs;
     }
 }
 
-export class SysRegistry {
-    readonly #systems: Map<SysConstructor<SysInstance>, SysInstance> = new Map();
 
-    get systems(): Map<SysConstructor<SysInstance>, SysInstance> {
+export class SystemRegistry {
+    readonly #systems: Map<AnySystemClass, AnySystemInstance> = new Map();
+
+    get systems(): Map<AnySystemClass, AnySystemInstance> {
         return this.#systems;
     }
 
-    public register<const SysInstanceT extends SysInstance>(sysClass: SysConstructor<SysInstanceT>, sysInstance: SysInstanceT) {
+    public register<const SysInstanceT extends AnySystemInstance>(sysClass: AnySystemClass, sysInstance: SysInstanceT) {
         this.#systems.set(sysClass, sysInstance)
     }
 
-    public unregister<const SysInstanceT extends SysInstance>(sysClass: SysConstructor<SysInstanceT>): SysInstanceT | null {
+    public unregister<const SysInstanceT extends AnySystemInstance>(sysClass: AnySystemClass): SysInstanceT | null {
         const sysInstance = this.#systems.get(sysClass);
         if (!sysInstance) return null;
         this.#systems.delete(sysClass);

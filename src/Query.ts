@@ -3,11 +3,11 @@
  * @license MIT (LICENSE.md)
  */
 
-import type { ComponentClass } from "./Component";
+import type { AnyComponentClass, ComponentClass } from "./Component";
 import { ComponentIndex } from "./ComponentIndex";
 import { Entity } from "./Entity";
 
-export class Query<const Cs extends readonly ComponentClass<any>[]> {
+export class Query<const Cs extends readonly AnyComponentClass[]> {
     public readonly comps: Cs;
     private readonly compIndex: ComponentIndex;
 

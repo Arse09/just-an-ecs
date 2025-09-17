@@ -8,23 +8,25 @@ import { Entity, EntityFactory } from "./Entity";
 
 import { ComponentIndex } from "./ComponentIndex";
 import {
-    Component,
+    type AnyComponent,
     type ComponentClass,
-    type ComponentInitializer,
-    type ComponentInitializersOf
+    type ComponentInitializers,
+    type PrivateComponentInitializers,
 } from "./Component";
 
 import { ResRegistry, ResQuery } from "./ResQuery";
-import { Resource, type ResClass, type ResInitializersOf } from "./Resource";
+import { type AnyResource, type AnyResourceClass, type ResourceInitializers } from "./Resource";
 
 import { Query } from "./Query";
-import { SysRegistry, type SysConstructor, type SysInstance } from "./Sys";
+
+import { SystemRegistry } from "./Sys";
+import { type SystemClass, type System, type AnySystemClass } from "./System";
 
 
 export class ECS {
-    private readonly sysRegistry = new SysRegistry();
-    private readonly justRegisteredSys: Set<SysInstance> = new Set();
-    private readonly sysToUnregister: Set<SysConstructor<SysInstance>> = new Set();
+    private readonly sysRegistry = new SystemRegistry();
+    private readonly justRegisteredSys: Set<System> = new Set();
+    private readonly sysToUnregister: Set<SystemClass<System>> = new Set();
 
     private readonly resRegistry = new ResRegistry();
     private readonly compIndex = new ComponentIndex();
@@ -47,11 +49,11 @@ export class ECS {
      * @param compInits Components to create the entity with
      * @returns The entity
      */
-    public newEntity<const T extends readonly Component<any>[]>(
-        ...compInits: ComponentInitializersOf<T>
+    public newEntity<const T extends readonly AnyComponent[]>(
+        ...compInits: ComponentInitializers<T>
     ): Entity {
-        const initializers: ComponentInitializer<Component<any>>[] = compInits.map(init =>
-            'args' in init ? { class: init.class, args: init.args } : { class: init.class }
+        const initializers: PrivateComponentInitializers<AnyComponent[]> = compInits.map(init =>
+            'args' in init ? { class: init.class, args: init.args } : { class: init.class, args: { __emptyComp__: Symbol(init.class.name) } as const }
         );
 
         const entity = EntityFactory.create(initializers, this.compIndex);
@@ -70,7 +72,7 @@ export class ECS {
      * Registers systems to the ECS.
      * @param systems
      */
-    public registerSys<const Ss extends SysConstructor<SysInstance>[]>(
+    public registerSys<const Ss extends AnySystemClass[]>(
         ...systems: Ss
     ) {
         for (const SysClass of systems) {
@@ -87,7 +89,7 @@ export class ECS {
      * Unregisters a system from the ECS (deferred until end of current update step).
      * @param sys
      */
-    public unregisterSys<const SysClassT extends SysConstructor<SysInstance>>(sys: SysClassT): void {
+    public unregisterSys<const SysClassT extends SystemClass<System>>(sys: SysClassT): void {
         if (this.sysRegistry.systems.has(sys)) {
             this.sysToUnregister.add(sys);
         }
@@ -97,7 +99,7 @@ export class ECS {
      * @param sys 
      * @returns true if sys is registered, false otherwise
      */
-    public isSysRegistered<const SysClassT extends SysConstructor<SysInstance>>(sys: SysClassT): boolean {
+    public isSysRegistered<const SysClassT extends SystemClass<System>>(sys: SysClassT): boolean {
         return this.sysRegistry.systems.has(sys) && !this.sysToUnregister.has(sys);
     }
 
@@ -106,7 +108,7 @@ export class ECS {
      * @param comps Required components
      * @returns An iterable Query
      */
-    public query<const T extends readonly ComponentClass<Component<any>>[]>(...comps: [...T]): Query<T> {
+    public query<const T extends readonly ComponentClass<AnyComponent>[]>(...comps: [...T]): Query<T> {
         return new Query(this.compIndex, [...comps]);
     }
 
@@ -115,9 +117,7 @@ export class ECS {
      * Registers resources to the ECS.
      * @param resInits
      */
-    public registerRes<const T extends readonly Resource<any>[]>(
-        ...resInits: [...ResInitializersOf<T>]
-    ) {
+    public registerRes<const T extends readonly AnyResource[]>(...resInits: ResourceInitializers<T>) {
         for (const init of resInits) {
             const instance = new init.class(init.args);
             (this.resRegistry.register(init.class, instance));
@@ -129,7 +129,7 @@ export class ECS {
      * @param resources 
      * @returns A ResQuery
      */
-    public queryRes<const T extends readonly ResClass<Resource<any>>[]>(...resources: [...T]): ResQuery<T> {
+    public queryRes<const T extends readonly AnyResourceClass[]>(...resources: [...T]): ResQuery<T> {
         return new ResQuery(this.resRegistry, resources);
     }
 
@@ -143,8 +143,8 @@ export class ECS {
 
     private _unregisterFlaggedSys() {
         for (const sys of this.sysToUnregister) {
-            const sysInstance = this.sysRegistry.unregister(sys);
-            sysInstance?.cleanup?.();
+            const System = this.sysRegistry.unregister(sys);
+            System?.cleanup?.();
         }
         this.sysToUnregister.clear();
     }
