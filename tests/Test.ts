@@ -3,9 +3,9 @@
  * @license MIT (LICENSE.md)
  */
 
-import { Component, createComponent, Entity } from "../src/index";
+import { Component, createComponent } from "../src/index";
 import { Resource, createResource } from "../src/index";
-import { Sys, type SysInstance } from "../src/index";
+import { System, createSystem } from "../src/index";
 import { ECS } from "../src/index";
 
 // Components
@@ -33,7 +33,8 @@ export class TestTickR extends Resource<{ elapsedSec: number; deltaSec: number; 
 }
 
 // Systems
-export class TestTickUpdaterS extends Sys implements SysInstance {
+@createSystem
+export class TestTickUpdaterS extends System {
     readonly res = this.ecs.queryRes(TestTickR);
 
     update(): void {
@@ -47,7 +48,8 @@ export class TestTickUpdaterS extends Sys implements SysInstance {
 }
 
 
-export class TestMovementS extends Sys implements SysInstance {
+@createSystem
+export class TestMovementS extends System {
     readonly query = this.ecs.query(TestPositionC, TestVelocityC, TestEmptyC);
     readonly res = this.ecs.queryRes(TestTickR);
 

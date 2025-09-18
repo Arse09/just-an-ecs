@@ -14,8 +14,16 @@ Feel free to contribute, report issues, or suggest improvements!
 
 ## Install
 
+Install the latest stable release:
+
 ``` bash
-npm i @arse09/just-an-ecs
+npm i @arse09/just-an-ecs@latest
+```
+
+Or, if you want to try the latest pre-release:
+
+``` bash
+npm i @arse09/just-an-ecs@next
 ```
 
 ## Getting started
@@ -67,24 +75,23 @@ export class TestTickR extends Resource<{ elapsedSec: number; deltaSec: number; 
 
 ### Systems
 
-⚠️ **Note:** Outdated after 1.2.1. These still work but are deprecated
-
 Systems contain *the logic* of your game.
 They query entities and resources, then update or process data each frame. Systems are executed in the order they are registered in the ECS.
 
 ``` typescript
 
-import { Sys, type SysInstance } from "@arse09/just-an-ecs";
+import { System, createSystem } from "@arse09/just-an-ecs";
 
-export class TestTickUpdaterS extends Sys implements SysInstance {
+@createSystem
+export class TestTickUpdaterS extends System {
     readonly res = this.ecs.queryRes(TestTickR);
 
-    // Runs in the first ecs.update() before the update fn | not required
+    // Runs in the first ecs.update() before the update fn
     setup(): void {
         // Do something at the start
     }
 
-    // Runs every ecs.update() | required
+    // Runs every ecs.update()
     update(): void {
         const tick = this.res.write(TestTickR, true);
 
@@ -95,8 +102,8 @@ export class TestTickUpdaterS extends Sys implements SysInstance {
     }
 }
 
-
-export class TestMovementS extends Sys implements SysInstance {
+@createSystem
+export class TestMovementS extends System {
     readonly query = this.ecs.query(TestPositionC, TestVelocityC, TestEmptyC);
     readonly res = this.ecs.queryRes(TestTickR);
 
@@ -154,4 +161,4 @@ requestAnimationFrame(gameLoop);
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE.md file for details
+This project is licensed under the MIT License - see [LICENSE](LICENSE) for details.
