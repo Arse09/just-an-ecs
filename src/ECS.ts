@@ -19,14 +19,14 @@ import { type AnyResource, type AnyResourceClass, type ResourceInitializers } fr
 
 import { Query } from "./Query";
 
-import { SystemRegistry } from "./Sys";
+import { SystemRegistry, type SysConstructor } from "./Sys";
 import { type SystemClass, type System, type AnySystemClass } from "./System";
 
 
 export class ECS {
     private readonly sysRegistry = new SystemRegistry();
     private readonly justRegisteredSys: Set<System> = new Set();
-    private readonly sysToUnregister: Set<SystemClass<System>> = new Set();
+    private readonly sysToUnregister: Set<AnySystemClass> = new Set();
 
     private readonly resRegistry = new ResRegistry();
     private readonly compIndex = new ComponentIndex();
@@ -72,7 +72,7 @@ export class ECS {
      * Registers systems to the ECS.
      * @param systems
      */
-    public registerSys<const Ss extends AnySystemClass[]>(
+    public registerSys<const Ss extends readonly AnySystemClass[] | readonly SysConstructor<any>[]>(
         ...systems: Ss
     ) {
         for (const SysClass of systems) {
@@ -89,7 +89,7 @@ export class ECS {
      * Unregisters a system from the ECS (deferred until end of current update step).
      * @param sys
      */
-    public unregisterSys<const SysClassT extends SystemClass<System>>(sys: SysClassT): void {
+    public unregisterSys<const SysClassT extends SystemClass<System> | SysConstructor<any>>(sys: SysClassT): void {
         if (this.sysRegistry.systems.has(sys)) {
             this.sysToUnregister.add(sys);
         }
@@ -99,7 +99,7 @@ export class ECS {
      * @param sys 
      * @returns true if sys is registered, false otherwise
      */
-    public isSysRegistered<const SysClassT extends SystemClass<System>>(sys: SysClassT): boolean {
+    public isSysRegistered<const SysClassT extends SystemClass<System> | SysConstructor<any>>(sys: SysClassT): boolean {
         return this.sysRegistry.systems.has(sys) && !this.sysToUnregister.has(sys);
     }
 

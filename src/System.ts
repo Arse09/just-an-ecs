@@ -7,7 +7,7 @@ export function createSystem<const T extends AnySystemClass>(target: T) { return
 export abstract class System {
     private static nextId = 0;
 
-    protected readonly $system: Symbol = Symbol("system");
+    protected readonly $$system: Symbol = Symbol("system");
 
     protected readonly id: number;
     protected readonly ecs: ECS;
