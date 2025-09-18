@@ -1,3 +1,8 @@
+/**
+ * @original Arse09
+ * @license MIT (LICENSE)
+ */
+
 import type { ECS } from "./ECS";
 
 // System decorator

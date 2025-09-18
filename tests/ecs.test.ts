@@ -1,6 +1,6 @@
 /**
  * @author Arse09
- * @license MIT (LICENSE.md)
+ * @license MIT (LICENSE)
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';

@@ -1,7 +1,7 @@
 /**
  * @original MIT code fireveined
  * @contributor Arse09
- * @license MIT (LICENSE.md)
+ * @license MIT (LICENSE)
  */
 
 import { type AnyComponent, type AnyComponentClass, type ComponentClass, type PrivateComponentInitializer, type PrivateComponentInitializers } from "./Component";

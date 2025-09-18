@@ -1,7 +1,7 @@
 /**
  * @original MIT code fireveined
  * @contributor Arse09
- * @license MIT (LICENSE.md)
+ * @license MIT (LICENSE)
  */
 
 import { Entity, EntityFactory } from "./Entity";
