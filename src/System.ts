@@ -6,7 +6,7 @@
 import type { ECS } from "./ECS";
 
 // System decorator
-export function createSystem<const T extends AnySystemClass>(target: T) { return target; }
+export function createSystem<const T extends new (...args: any[]) => any>(target: T) { }
 
 // System
 export abstract class System {
@@ -30,7 +30,7 @@ export abstract class System {
 // Types
 export type AnySystem = System;
 
-export type SystemClass<T extends System> = new (ecs: ECS) => T
+export type SystemClass<T extends AnySystem> = new (ecs: ECS) => T
 export type AnySystemClass = SystemClass<AnySystem>;
 
 export type SystemInstance<T extends AnySystemClass> = T extends SystemClass<infer System> ? System : never;

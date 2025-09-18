@@ -15,17 +15,17 @@ export class TestPositionC extends Component<{ x: number; y: number }> {
     public y = this.args.y;
 }
 
-@createComponent
+/* @createComponent */
 export class TestVelocityC extends Component<{ vx: number; vy: number }> {
     public vx = this.args.vx;
     public vy = this.args.vy;
 }
 
-@createComponent
+/* @createComponent */
 export class TestEmptyC extends Component { }
 
 // Resources
-@createResource
+/* @createResource */
 export class TestTickR extends Resource<{ elapsedSec: number; deltaSec: number; lastSec: number }> {
     public elapsedSec = this.args.elapsedSec;
     public deltaSec = this.args.deltaSec;
@@ -47,7 +47,7 @@ export class TestTickUpdaterS extends System {
     }
 }
 
-@createSystem
+/* @createSystem */
 export class TestMovementS extends System {
     readonly query = this.ecs.query(TestPositionC, TestVelocityC, TestEmptyC);
     readonly res = this.ecs.queryRes(TestTickR);
@@ -64,3 +64,28 @@ export class TestMovementS extends System {
         }
     }
 }
+
+// ECS
+
+const ecs = new ECS();
+
+ecs.registerSys(TestTickUpdaterS, TestMovementS);
+
+ecs.registerRes(
+    { class: TestTickR, args: { elapsedSec: 0, deltaSec: 0, lastSec: performance.now() / 1000 } },
+);
+
+
+const entity = ecs.newEntity(
+    { class: TestPositionC, args: { x: 0, y: 0 } },
+    { class: TestVelocityC, args: { vx: 1, vy: 1 } },
+    { class: TestEmptyC },
+)
+
+
+function gameLoop() {
+    ecs.update();
+    requestAnimationFrame(gameLoop);
+}
+
+requestAnimationFrame(gameLoop);

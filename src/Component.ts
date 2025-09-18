@@ -6,11 +6,11 @@
 
 import type { AnySystemClass } from "./System";
 
-type EmptyComponentArgs = { __emptyComp__?: Symbol };
+type EmptyComponentArgs = { __emptyComp: Symbol };
 
 //
 export function createEmptyComponentArgs(obj?: AnySystemClass): EmptyComponentArgs {
-    return { __emptyComp__: Symbol(obj ? obj.name : "") } as const;
+    return { __emptyComp: Symbol(obj ? obj.name : "") } as const;
 }
 
 // Component decorator
