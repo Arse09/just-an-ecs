@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { ECS } from '../src/index';
+import { ECS } from '../src';
 import { TestPositionC, TestVelocityC, TestEmptyC, TestTickR, TestTickUpdaterS, TestMovementS } from './Test';
 
 describe('ECS Core Functionality', () => {

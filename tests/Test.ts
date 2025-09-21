@@ -3,10 +3,9 @@
  * @license MIT (LICENSE)
  */
 
-import { Component, createComponent } from "../src/index";
-import { Resource, createResource } from "../src/index";
-import { System, createSystem } from "../src/index";
-import { ECS } from "../src/index";
+import { Component, createComponent } from "../src";
+import { Resource, createResource } from "../src";
+import { System, createSystem } from "../src";
 
 // Components
 @createComponent

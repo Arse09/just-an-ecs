@@ -3,10 +3,10 @@
  * @license MIT (LICENSE)
  */
 
-import { Component, createComponent } from "../src/index";
-import { Resource, createResource } from "../src/index";
-import { System, createSystem } from "../src/index";
-import { ECS } from "../src/index";
+import { Component, createComponent } from "../src";
+import { Resource, createResource } from "../src";
+import { System, createSystem } from "../src";
+import { ECS } from "../src";
 
 // Components
 @createComponent
@@ -15,17 +15,17 @@ export class TestPositionC extends Component<{ x: number; y: number }> {
     public y = this.args.y;
 }
 
-/* @createComponent */
+@createComponent
 export class TestVelocityC extends Component<{ vx: number; vy: number }> {
     public vx = this.args.vx;
     public vy = this.args.vy;
 }
 
-/* @createComponent */
+@createComponent
 export class TestEmptyC extends Component { }
 
 // Resources
-/* @createResource */
+@createResource
 export class TestTickR extends Resource<{ elapsedSec: number; deltaSec: number; lastSec: number }> {
     public elapsedSec = this.args.elapsedSec;
     public deltaSec = this.args.deltaSec;
@@ -76,7 +76,7 @@ ecs.registerRes(
 );
 
 
-const entity = ecs.newEntity(
+ecs.newEntity(
     { class: TestPositionC, args: { x: 0, y: 0 } },
     { class: TestVelocityC, args: { vx: 1, vy: 1 } },
     { class: TestEmptyC },

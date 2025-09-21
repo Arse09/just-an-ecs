@@ -1,12 +1,12 @@
 /**
- * @original Arse09
+ * @author Arse09
  * @license MIT (LICENSE)
  */
 
 import type { ECS } from "./ECS";
 
 // System decorator
-export function createSystem<const T extends new (...args: any[]) => any>(target: T) { }
+export function createSystem<const T extends new (...args: any[]) => any>(_target: T) { }
 
 // System
 export abstract class System {
@@ -18,7 +18,7 @@ export abstract class System {
     protected readonly ecs: ECS;
 
     setup?(): void;
-    update(): void { /* To be overriden */ };
+    update(): void { /* To be overridden */ };
     cleanup?(): void;
 
     constructor(ecs: ECS) {

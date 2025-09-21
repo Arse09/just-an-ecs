@@ -1,5 +1,5 @@
 /**
- * @original Arse09
+ * @author Arse09
  * @license MIT (LICENSE)
  */
 
