@@ -4,73 +4,7 @@
  * @license MIT (LICENSE)
  */
 
-import { ECS } from "./ECS";
-import { System, type AnySystemClass, type AnySystemInstance, type SystemClass } from "./System";
-
-/** 
- * @deprecated Don't use this implementation. If using as a type, use `type SystemInstance` instead.
- * @example 
- * - Old system
- *  export class TestMovementS extends Sys implements SysInstance {
- *      // ... 
- *  }
- * 
- * - New system (ignore "\")
- * \@createSystem
- * export class TestMovementS extends System {
- *      // ... 
- *  }
- */
-export interface SysInstance {
-    readonly ecs: ECS;
-
-    setup?(): void;
-    update(): void;
-    cleanup?(): void;
-}
-/** 
- * @deprecated Use the new `System` class instead.
- * @example 
- * - Old system
- *  export class TestMovementS extends Sys implements SysInstance {
- *      // ... 
- *  }
- * 
- * - New system (ignore "\")
- * \@createSystem
- * export class TestMovementS extends System {
- *      // ... 
- *  }
- */
-export abstract class Sys {
-    readonly ecs: ECS;
-
-    protected readonly $$old_system = Symbol("old-system");
-
-    setup?(): void;
-    update(): void { /* To be overriden */ };
-    cleanup?(): void;
-
-    constructor(ecs: ECS) {
-        this.ecs = ecs;
-    }
-}
-
-/** 
- * @deprecated Use the new `type SystemClass` instead
- * @example 
- * - Old system
- *  export class TestMovementS extends Sys implements SysInstance {
- *      // ... 
- *  }
- * 
- * - New system (ignore "\")
- * \@createSystem
- * export class TestMovementS extends System {
- *      // ... 
- *  }
- */
-export type SysConstructor<T extends SysInstance> = new (...args: any[]) => T;
+import {type AnySystemClass, type AnySystemInstance, type SystemClass} from "./System";
 
 
 export class SystemRegistry {

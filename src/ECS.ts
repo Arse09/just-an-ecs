@@ -4,9 +4,9 @@
  * @license MIT (LICENSE)
  */
 
-import { Entity, EntityFactory } from "./Entity";
+import {Entity, EntityFactory} from "./Entity";
 
-import { ComponentIndex } from "./ComponentIndex";
+import {ComponentIndex} from "./ComponentIndex";
 import {
     type AnyComponent,
     type ComponentClass,
@@ -14,13 +14,13 @@ import {
     type PrivateComponentInitializers,
 } from "./Component";
 
-import { ResRegistry, ResQuery } from "./ResQuery";
-import { type AnyResource, type AnyResourceClass, type ResourceInitializers } from "./Resource";
+import {ResQuery, ResRegistry} from "./ResQuery";
+import {type AnyResource, type AnyResourceClass, type ResourceInitializers} from "./Resource";
 
-import { Query } from "./Query";
+import {Query} from "./Query";
 
-import { SystemRegistry, type SysConstructor } from "./Sys";
-import { type SystemClass, type AnySystemClass, type AnySystem } from "./System";
+import {SystemRegistry} from "./Sys";
+import {type AnySystem, type AnySystemClass, type SystemClass} from "./System";
 
 
 export class ECS {
@@ -53,15 +53,17 @@ export class ECS {
         ...compInits: ComponentInitializers<T>
     ): Entity {
         const initializers: PrivateComponentInitializers<AnyComponent[]> = compInits.map(init =>
-            'args' in init ? { class: init.class, args: init.args } : { class: init.class, args: { __emptyComp__: Symbol(init.class.name) } as const }
+            'args' in init ? {class: init.class, args: init.args} : {
+                class: init.class,
+                args: {__emptyComp__: Symbol(init.class.name)} as const
+            }
         );
 
-        const entity = EntityFactory.create(initializers, this.compIndex);
-        return entity;
+        return EntityFactory.create(initializers, this.compIndex);
     }
 
     /**
-     * Deletes an entity from the ecs(deferred until end of update).
+     * Deletes an entity from the ecs(deferred until the end of update).
      * @param entity The entity to delete
      */
     public deleteEntity(entity: Entity) {
@@ -72,7 +74,7 @@ export class ECS {
      * Registers systems to the ECS.
      * @param systems
      */
-    public registerSys<const Ss extends readonly AnySystemClass[] | readonly SysConstructor<any>[]>(
+    public registerSys<const Ss extends readonly AnySystemClass[]>(
         ...systems: Ss
     ) {
         for (const SysClass of systems) {
@@ -86,20 +88,20 @@ export class ECS {
 
 
     /**
-     * Unregisters a system from the ECS (deferred until end of current update step).
+     * Unregisters a system from the ECS (deferred until the end of the current update step).
      * @param sys
      */
-    public unregisterSys<const SysClassT extends SystemClass<AnySystem> | SysConstructor<any>>(sys: SysClassT): void {
+    public unregisterSys<const SysClassT extends SystemClass<AnySystem>>(sys: SysClassT): void {
         if (this.sysRegistry.systems.has(sys)) {
             this.sysToUnregister.add(sys);
         }
     }
 
     /**
-     * @param sys 
+     * @param sys
      * @returns true if sys is registered, false otherwise
      */
-    public isSysRegistered<const SysClassT extends SystemClass<AnySystem> | SysConstructor<any>>(sys: SysClassT): boolean {
+    public isSysRegistered<const SysClassT extends SystemClass<AnySystem>>(sys: SysClassT): boolean {
         return this.sysRegistry.systems.has(sys) && !this.sysToUnregister.has(sys);
     }
 
@@ -126,7 +128,7 @@ export class ECS {
 
     /**
      * Queries all the specified resources
-     * @param resources 
+     * @param resources
      * @returns A ResQuery
      */
     public queryRes<const T extends readonly AnyResourceClass[]>(...resources: [...T]): ResQuery<T> {

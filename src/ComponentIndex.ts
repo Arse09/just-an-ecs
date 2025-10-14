@@ -3,8 +3,8 @@
  * @license MIT (LICENSE)
  */
 
-import { Entity } from "./Entity";
-import { type AnyComponentClass } from "./Component";
+import {Entity} from "./Entity";
+import {type AnyComponentClass} from "./Component";
 
 export class ComponentIndex {
     private readonly index = new Map<AnyComponentClass, Set<Entity>>();
@@ -61,7 +61,10 @@ export class ComponentIndex {
         for (const e of smallest) {
             let ok = true;
             for (const s of others) {
-                if (!s.has(e)) { ok = false; break; }
+                if (!s.has(e)) {
+                    ok = false;
+                    break;
+                }
             }
             if (ok) out.push(e);
         }

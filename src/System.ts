@@ -6,7 +6,7 @@
 import type { ECS } from "./ECS";
 
 // System decorator
-export function createSystem<const T extends new (...args: any[]) => any>(_target: T) { }
+export function createSystem<const T extends AnySystemClass>(_target: T) { }
 
 // System
 export abstract class System {
@@ -17,11 +17,12 @@ export abstract class System {
     protected readonly id: number;
     protected readonly ecs: ECS;
 
-    setup?(): void;
-    update(): void { /* To be overridden */ };
-    cleanup?(): void;
+    public setup?(): void;
+    public update(): void { /* To be overridden */ };
+    public cleanup?(): void;
 
-    constructor(ecs: ECS) {
+    // @ts-ignore
+    public constructor(ecs: ECS) {
         this.ecs = ecs;
         this.id = System.nextId++;
     }

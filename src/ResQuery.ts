@@ -3,9 +3,9 @@
  * @license MIT (LICENSE)
  */
 
-import type { ResourceClass, Resource, AnyResource, AnyResourceClass } from "./Resource";
+import type {ResourceClass, AnyResource, AnyResourceClass} from "./Resource";
 
-export class ResQuery<const Rs extends readonly ResourceClass<any>[]> {
+export class ResQuery<const Rs extends readonly AnyResourceClass[]> {
     private readonly _resources: Rs;
     private readonly resRegistry: ResRegistry;
 
@@ -14,23 +14,23 @@ export class ResQuery<const Rs extends readonly ResourceClass<any>[]> {
         this._resources = resources;
     }
 
-    read<T extends AnyResource>(ResClass: ResourceClass<T>, fail: true): Readonly<T>;
-    read<T extends AnyResource>(ResClass: ResourceClass<T>, fail?: false): Readonly<T> | undefined;
+    public read<T extends AnyResource>(ResClass: ResourceClass<T>, fail: true): Readonly<T>;
+    public read<T extends AnyResource>(ResClass: ResourceClass<T>, fail?: false): Readonly<T> | undefined;
 
-    read<T extends AnyResource>(ResClass: ResourceClass<T>, fail: boolean = false): Readonly<T> | undefined {
+    public read<T extends AnyResource>(ResClass: ResourceClass<T>, fail: boolean = false): Readonly<T> | undefined {
         const comp = this.resRegistry.get(ResClass);
         if (!comp) {
             if (fail) throw new Error("Resource not found");
             return undefined;
         }
-        return Object.freeze({ ...comp });
+        return Object.freeze({...comp});
     }
 
 
-    write<T extends AnyResource>(ResClass: ResourceClass<T>, fail: true): T;
-    write<T extends AnyResource>(ResClass: ResourceClass<T>, fail?: false): T | undefined;
+    public write<T extends AnyResource>(ResClass: ResourceClass<T>, fail: true): T;
+    public write<T extends AnyResource>(ResClass: ResourceClass<T>, fail?: false): T | undefined;
 
-    write<T extends AnyResource>(ResClass: ResourceClass<T>, fail: boolean = false): T | undefined {
+    public write<T extends AnyResource>(ResClass: ResourceClass<T>, fail: boolean = false): T | undefined {
         const comp = this.resRegistry.get(ResClass);
         if (!comp) {
             if (fail) throw new Error(`Resource not found in entity`);

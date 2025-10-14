@@ -3,9 +3,9 @@
  * @license MIT (LICENSE)
  */
 
-import type { AnyComponentClass } from "./Component";
-import { ComponentIndex } from "./ComponentIndex";
-import { Entity } from "./Entity";
+import type {AnyComponentClass} from "./Component";
+import {ComponentIndex} from "./ComponentIndex";
+import {Entity} from "./Entity";
 
 export class Query<const Cs extends readonly AnyComponentClass[]> {
     public readonly comps: Cs;

@@ -4,8 +4,14 @@
  * @license MIT (LICENSE)
  */
 
-import { type AnyComponent, type AnyComponentClass, type ComponentClass, type PrivateComponentInitializer, type PrivateComponentInitializers } from "./Component";
-import { ComponentIndex } from "./ComponentIndex";
+import {
+    type AnyComponent,
+    type AnyComponentClass,
+    type ComponentClass,
+    type PrivateComponentInitializer,
+    type PrivateComponentInitializers
+} from "./Component";
+import {ComponentIndex} from "./ComponentIndex";
 
 export class Entity {
     public id: number;
@@ -23,9 +29,10 @@ export class Entity {
     private readonly compMap: Map<AnyComponentClass, AnyComponent>;
     private readonly compIndex: ComponentIndex;
 
-    read<T extends AnyComponent>(CompClass: ComponentClass<T>, fail: true): Readonly<T>;
-    read<T extends AnyComponent>(CompClass: ComponentClass<T>, fail?: false): Readonly<T> | undefined;
-    read<T extends AnyComponent>(CompClass: ComponentClass<T>, fail = false): Readonly<T> | undefined {
+    public read<T extends AnyComponent>(CompClass: ComponentClass<T>, fail: true): Readonly<T>;
+    public read<T extends AnyComponent>(CompClass: ComponentClass<T>, fail?: false): Readonly<T> | undefined;
+
+    public read<T extends AnyComponent>(CompClass: ComponentClass<T>, fail = false): Readonly<T> | undefined {
         const comp = this.compMap.get(CompClass);
         if (!comp) {
             if (fail) throw new Error("Component not found");
@@ -35,10 +42,10 @@ export class Entity {
     }
 
 
-    write<T extends AnyComponent>(CompClass: ComponentClass<T>, fail: true): T;
-    write<T extends AnyComponent>(CompClass: ComponentClass<T>, fail?: false): T | undefined;
+    public write<T extends AnyComponent>(CompClass: ComponentClass<T>, fail: true): T;
+    public write<T extends AnyComponent>(CompClass: ComponentClass<T>, fail?: false): T | undefined;
 
-    write<T extends AnyComponent>(
+    public write<T extends AnyComponent>(
         CompClass: ComponentClass<T>,
         fail: boolean = false
     ): T | undefined {
@@ -50,12 +57,12 @@ export class Entity {
         return comp as unknown as T;
     }
 
-    has<T extends AnyComponent>(CompClass: ComponentClass<T>): boolean {
+    public has<T extends AnyComponent>(CompClass: ComponentClass<T>): boolean {
         return this.compMap.has(CompClass);
     }
 
 
-    addComps<const T extends readonly AnyComponent[]>(
+    public addComps<const T extends readonly AnyComponent[]>(
         ...compInits: PrivateComponentInitializers<T>
     ) {
         for (const compInit of compInits) {
@@ -67,7 +74,7 @@ export class Entity {
         }
     }
 
-    removeComps<const T extends readonly AnyComponentClass[]>(
+    public removeComps<const T extends readonly AnyComponentClass[]>(
         ...compClasses: [...T]
     ) {
         for (let i = 0; i < compClasses.length; i++) {
@@ -82,7 +89,8 @@ export class Entity {
 export class EntityFactory {
     private static nextEntityId = 0;
 
-    private constructor() { }
+    private constructor() {
+    }
 
     static create<InitsT extends PrivateComponentInitializer<AnyComponent>[]>(
         compInits: [...InitsT],
