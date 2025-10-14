@@ -3,13 +3,14 @@
 ⚠️ **Note:** This project is still in active development.  
 
 - I will try **not to introduce breaking changes**, but please be aware that the API may evolve.  
-- I apologize for initially starting at **version 1.x** instead of 0.x - this was premature, and I appreciate your understanding.  
+- I apologize for initially starting at **version 1.x** instead of 0.x — this was premature, and I appreciate your
+  understanding.
 
 Feel free to contribute, report issues, or suggest improvements!
 
 ---
 
-- Github repo: <https://github.com/Arse09/just-an-ecs>
+- GitHub repo: <https://github.com/Arse09/just-an-ecs>
 - Npm package: <https://www.npmjs.com/package/@arse09/just-an-ecs>
 
 ## Install
@@ -126,7 +127,7 @@ export class TestMovementS extends System {
 ### ECS
 
 The ECS (Entity Component System) is *the core* of your game engine.
-It manages entities, components, resources, and systems, and handles updating systems every frame.
+It manages entities, components, resources, and systems and handles updating systems every frame.
 
 ``` typescript
 
@@ -161,4 +162,4 @@ requestAnimationFrame(gameLoop);
 
 ## License
 
-This project is licensed under the MIT License - see [LICENSE](LICENSE) for details.
+This project is licensed under the MIT License — see [LICENSE](LICENSE) for details.
