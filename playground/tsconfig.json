@@ -25,7 +25,22 @@
     "forceConsistentCasingInFileNames": true,
 
     /* Decorators */
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "noImplicitOverride": true,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "isolatedModules": true,
+    "allowJs": true,
+    "checkJs": true,
+    "esModuleInterop": true
   },
-  "include": ["./src"]
+  "include": [
+    "./src"
+  ],
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Strictest",
+  "_version": "2.0.0"
 }

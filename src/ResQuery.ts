@@ -3,7 +3,8 @@
  * @license MIT (LICENSE)
  */
 
-import type {ResourceClass, AnyResource, AnyResourceClass} from "./Resource";
+import type {AnyResource, AnyResourceClass, ResourceClass} from "./Resource";
+import type {Immutable, Mutable} from "./types";
 
 export class ResQuery<const Rs extends readonly AnyResourceClass[]> {
     private readonly _resources: Rs;
@@ -14,29 +15,28 @@ export class ResQuery<const Rs extends readonly AnyResourceClass[]> {
         this._resources = resources;
     }
 
-    public read<T extends AnyResource>(ResClass: ResourceClass<T>, fail: true): Readonly<T>;
-    public read<T extends AnyResource>(ResClass: ResourceClass<T>, fail?: false): Readonly<T> | undefined;
+    public read<T extends AnyResource>(ResClass: ResourceClass<T>, fail: true): Immutable<T>;
+    public read<T extends AnyResource>(ResClass: ResourceClass<T>, fail?: false): Immutable<T> | undefined;
 
-    public read<T extends AnyResource>(ResClass: ResourceClass<T>, fail: boolean = false): Readonly<T> | undefined {
-        const comp = this.resRegistry.get(ResClass);
-        if (!comp) {
+    public read<T extends AnyResource>(ResClass: ResourceClass<T>, fail: boolean = false): Immutable<T> | undefined {
+        const res = this.resRegistry.get(ResClass);
+        if (!res) {
             if (fail) throw new Error("Resource not found");
             return undefined;
         }
-        return Object.freeze({...comp});
+        return res as unknown as Immutable<T>;
     }
 
+    public write<T extends AnyResource>(ResClass: ResourceClass<T>, fail: true): Mutable<T>;
+    public write<T extends AnyResource>(ResClass: ResourceClass<T>, fail?: false): Mutable<T> | undefined;
 
-    public write<T extends AnyResource>(ResClass: ResourceClass<T>, fail: true): T;
-    public write<T extends AnyResource>(ResClass: ResourceClass<T>, fail?: false): T | undefined;
-
-    public write<T extends AnyResource>(ResClass: ResourceClass<T>, fail: boolean = false): T | undefined {
-        const comp = this.resRegistry.get(ResClass);
-        if (!comp) {
+    public write<T extends AnyResource>(ResClass: ResourceClass<T>, fail: boolean = false): Mutable<T> | undefined {
+        const res = this.resRegistry.get(ResClass);
+        if (!res) {
             if (fail) throw new Error(`Resource not found in entity`);
             return undefined;
         }
-        return comp;
+        return res as Mutable<T>;
     }
 }
 

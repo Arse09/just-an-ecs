@@ -12,6 +12,7 @@ import {
     type PrivateComponentInitializers
 } from "./Component";
 import {ComponentIndex} from "./ComponentIndex";
+import type {Immutable, Mutable} from "./types";
 
 export class Entity {
     public id: number;
@@ -29,21 +30,21 @@ export class Entity {
     private readonly compMap: Map<AnyComponentClass, AnyComponent>;
     private readonly compIndex: ComponentIndex;
 
-    public read<T extends AnyComponent>(CompClass: ComponentClass<T>, fail: true): Readonly<T>;
-    public read<T extends AnyComponent>(CompClass: ComponentClass<T>, fail?: false): Readonly<T> | undefined;
+    public read<T extends AnyComponent>(CompClass: ComponentClass<T>, fail: true): Immutable<T>;
+    public read<T extends AnyComponent>(CompClass: ComponentClass<T>, fail?: false): Immutable<T> | undefined;
 
-    public read<T extends AnyComponent>(CompClass: ComponentClass<T>, fail = false): Readonly<T> | undefined {
+    public read<T extends AnyComponent>(CompClass: ComponentClass<T>, fail = false): Immutable<T> | undefined {
         const comp = this.compMap.get(CompClass);
         if (!comp) {
             if (fail) throw new Error("Component not found");
             return undefined;
         }
-        return comp as unknown as Readonly<T>;
+        return comp as unknown as Immutable<T>;
     }
 
 
-    public write<T extends AnyComponent>(CompClass: ComponentClass<T>, fail: true): T;
-    public write<T extends AnyComponent>(CompClass: ComponentClass<T>, fail?: false): T | undefined;
+    public write<T extends AnyComponent>(CompClass: ComponentClass<T>, fail: true): Mutable<T>;
+    public write<T extends AnyComponent>(CompClass: ComponentClass<T>, fail?: false): Mutable<T> | undefined;
 
     public write<T extends AnyComponent>(
         CompClass: ComponentClass<T>,
@@ -54,7 +55,7 @@ export class Entity {
             if (fail) throw new Error(`Component not found in entity`);
             return undefined;
         }
-        return comp as unknown as T;
+        return comp as Mutable<T>;
     }
 
     public has<T extends AnyComponent>(CompClass: ComponentClass<T>): boolean {

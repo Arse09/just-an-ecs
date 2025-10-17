@@ -33,6 +33,8 @@ export class ECS {
 
     private readonly entitiesToDelete: Set<Entity> = new Set();
 
+    private stopFlag = false;
+
     public update(): void {
         for (const sys of this.justRegisteredSys) sys.setup?.();
         this._unregisterFlaggedSys();
@@ -42,6 +44,28 @@ export class ECS {
 
         this._unregisterFlaggedSys();
         this._deleteFlaggedEntities();
+    }
+
+    /**
+     * Starts a loop that updates the ECS every frame.
+     */
+    public start(): void {
+        let loop = () => {
+            if (this.stopFlag) return;
+
+            this.update();
+            requestAnimationFrame(loop);
+        }
+
+        requestAnimationFrame(loop);
+    }
+
+    /**
+     * Stops the ECS from updating.
+     * Only works if the ECS was started via ECS.start().
+     */
+    public stop() {
+        this.stopFlag = true;
     }
 
     /**

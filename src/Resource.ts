@@ -17,7 +17,8 @@ export abstract class Resource<ArgsT extends object> {
     protected readonly args: ArgsT;
     protected readonly id: number;
 
-    protected constructor(args: ArgsT) {
+    // @ts-ignore
+    public constructor(args: ArgsT) {
         this.args = args;
         this.id = Resource.nextId++;
     }
